@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SharpBank.Models
 {
-    class Transaction
+    public class Transaction
     {
         public string TransactionID { get; set; }
         public string RecepientBank { get; set; }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SharpBank.Models
 {
-    class Bank
+    public class Bank
     {
         private string bankName;
         public string BankName
@@ -21,7 +21,6 @@ namespace SharpBank.Models
             set { ifsc = value; }
         }
         private Dictionary<string, Account> accounts;
-
         
 
         public Bank(string name,string code)
@@ -35,10 +34,17 @@ namespace SharpBank.Models
         {
             return accounts[id];
         }
+
         public void addAccount(Account acc)
         {
             accounts.Add(acc.AccountNumber,acc);
         }
+
+        public void RemoveAccount(string accountNumber)
+        {
+            accounts.Remove(accountNumber);
+        }
+        public int Count { get { return accounts.Count;} }
         
     }
 }

@@ -6,8 +6,8 @@ namespace SharpBank.Models
     public static class BankManager
     {
         private static int count;
-        private static Dictionary<string, Bank> Banks;
-        private static Dictionary<string, Transaction> Transactions;
+        public static Dictionary<string, Bank> Banks;
+        public static Dictionary<string, Transaction> Transactions;
 
         static BankManager()
         {
