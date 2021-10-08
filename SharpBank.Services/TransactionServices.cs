@@ -19,6 +19,10 @@ namespace SharpBank.Services
         {
             try
             {
+                if (amount < 0)
+                {
+                    throw new FormatException();
+                }
                 if (BankManager.Banks[senderIFSC].getAccount(sender).Balance - amount < 0)
                 {
                     throw new BalanceException();
