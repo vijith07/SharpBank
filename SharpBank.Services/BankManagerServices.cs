@@ -21,5 +21,8 @@ namespace SharpBank.Services
             BankManager.Banks.Add(bank.IFSC,bank);
             return bank.IFSC;
         }
+        public static Dictionary<string,Bank> GetBanks() {
+            return BankManager.Banks;
+        }
     }
 }
