@@ -8,7 +8,7 @@ namespace SharpBank.CLI
     {
         static void Main(string[] args)
         {
-            int select = int.Parse(Console.ReadLine());
+           
             BankManagerServices.AddBank("Acksis Bank");
             BankManagerServices.AddBank("Yaxis Bank");
             BankManagerServices.AddBank("Puxis Bank");
@@ -17,11 +17,9 @@ namespace SharpBank.CLI
             bool isRunning = true;
             int currentMenu = 0;
             string userIFSC = "";
-                            string userAccountNumber="";
-                string userPassword="";
+            string userAccountNumber = "";
+            string userPassword = "";
             while (isRunning) { 
-
-                
                 if (currentMenu == 0) {
                     ShowMenu(currentMenu);
                     int bnk = Inputs.GetSelection();
