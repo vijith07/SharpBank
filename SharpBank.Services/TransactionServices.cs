@@ -34,17 +34,67 @@ namespace SharpBank.Services
             }
         
         }
-        public void AddTransaction(string senderIFSC, string sender, string receiverIFSC, string receiver,decimal amount) 
+        private void validateTransaction(string ifsc, string accountNumber, decimal amount) {
+            try
+            {
+                if ((BankManager.Banks[ifsc].getAccount(accountNumber).Balance + amount) < 0)
+                {
+                    throw new BalanceException();
+                }
+            }
+            catch (ArgumentException e)
+            {
+                throw new AccountNumberException();
+            }
+            catch (KeyNotFoundException e)
+            {
+                throw new IFSCException();
+            }
+
+        }
+        private void AddTransaction(string senderIFSC, string sender, string receiverIFSC, string receiver,decimal amount) 
         {
             validateTransaction(senderIFSC,sender,receiverIFSC,receiver,amount);
             string id = generateTransactionID();
             Transaction txn = new Transaction(id, senderIFSC, sender, receiverIFSC, receiver, amount);
-            BankManager.Transactions.Add(id,txn);
+            BankManager.Transactions.Add(txn);
         }
+        private void AddTransaction(string ifsc, string accountNumber, decimal amount)
+        {
+            if (amount > 0)
+            {
+                
+                string id = generateTransactionID();
+                Transaction txn = new Transaction(id, "Deposit", "Deposit", ifsc, accountNumber, amount);
+                BankManager.Transactions.Add(txn);
+                
+            }
+            else
+            {
+                string id = generateTransactionID();
+                Transaction txn = new Transaction(id, ifsc, accountNumber, "Withdraw", "Withdraw", amount);
+                BankManager.Transactions.Add(txn);
+            }
+        }
+
+        public void Transfer(string senderIFSC, string sender, string receiverIFSC, string receiver, decimal amount) 
+        {
+            validateTransaction(senderIFSC, sender, receiverIFSC, receiver, amount);
+            Account senderAcc = BankManager.Banks[senderIFSC].getAccount(sender);
+            Account receiverAcc = BankManager.Banks[receiverIFSC].getAccount(receiver);
+            senderAcc.Balance -= amount;
+            receiverAcc.Balance += amount;
+            BankManager.Banks[senderIFSC].setAccount(sender,senderAcc);
+            BankManager.Banks[receiverIFSC].setAccount(receiver,receiverAcc);
+            AddTransaction(senderIFSC, sender, receiverIFSC, receiver, amount);
+
+        }
+
         public void Withdraw(string accountNumber, string ifsc, decimal amount)
         {
             try
             {
+                validateTransaction(ifsc, accountNumber, -amount);
                 Account acc = BankManager.Banks[ifsc].getAccount(accountNumber);
 
                 if (acc.Balance - amount < 0)
@@ -59,6 +109,7 @@ namespace SharpBank.Services
                 acc.Balance -= amount;
 
                 BankManager.Banks[ifsc].setAccount(accountNumber, acc);
+                AddTransaction(ifsc, accountNumber, -amount);
 
             }
             catch (KeyNotFoundException e)
@@ -84,6 +135,7 @@ namespace SharpBank.Services
                 acc.Balance += amount;
 
                 BankManager.Banks[ifsc].setAccount(accountNumber, acc);
+                AddTransaction(ifsc, accountNumber, amount);
 
             }
             catch (KeyNotFoundException e)
@@ -95,5 +147,6 @@ namespace SharpBank.Services
                 throw new AccountNumberException();
             }
         }
+
     }
 }
