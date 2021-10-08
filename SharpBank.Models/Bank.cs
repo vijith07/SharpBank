@@ -40,6 +40,10 @@ namespace SharpBank.Models
             accounts.Add(acc.AccountNumber,acc);
         }
 
+        public void setAccount(string id,Account acc) {
+            accounts[id] = acc;
+        }
+
         public void RemoveAccount(string accountNumber)
         {
             accounts.Remove(accountNumber);

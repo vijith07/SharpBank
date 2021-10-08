@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace SharpBank.Models.Exceptions
 {
-    public class IFSCException:Exception
+    public class BalanceException:Exception
     {
-        
     }
 }
