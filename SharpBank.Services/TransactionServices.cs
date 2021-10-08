@@ -8,14 +8,14 @@ using SharpBank.Models.Exceptions;
 
 namespace SharpBank.Services
 {
-    class TransactionServices
+    public static class TransactionServices
     {
-        private string generateTransactionID() 
+        private static string generateTransactionID() 
         {
             int serialNumber = BankManager.Transactions.Count + 1;
             return serialNumber.ToString();
         }
-        private void validateTransaction(string senderIFSC, string sender, string receiverIFSC, string receiver, decimal amount)
+        private static void validateTransaction(string senderIFSC, string sender, string receiverIFSC, string receiver, decimal amount)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace SharpBank.Services
             }
         
         }
-        private void validateTransaction(string ifsc, string accountNumber, decimal amount) {
+        private static void validateTransaction(string ifsc, string accountNumber, decimal amount) {
             try
             {
                 if ((BankManager.Banks[ifsc].getAccount(accountNumber).Balance + amount) < 0)
@@ -52,14 +52,14 @@ namespace SharpBank.Services
             }
 
         }
-        private void AddTransaction(string senderIFSC, string sender, string receiverIFSC, string receiver,decimal amount) 
+        private static void AddTransaction(string senderIFSC, string sender, string receiverIFSC, string receiver,decimal amount) 
         {
             validateTransaction(senderIFSC,sender,receiverIFSC,receiver,amount);
             string id = generateTransactionID();
             Transaction txn = new Transaction(id, senderIFSC, sender, receiverIFSC, receiver, amount);
             BankManager.Transactions.Add(txn);
         }
-        private void AddTransaction(string ifsc, string accountNumber, decimal amount)
+        private static void AddTransaction(string ifsc, string accountNumber, decimal amount)
         {
             if (amount > 0)
             {
@@ -77,7 +77,7 @@ namespace SharpBank.Services
             }
         }
 
-        public void Transfer(string senderIFSC, string sender, string receiverIFSC, string receiver, decimal amount) 
+        public static void Transfer(string senderIFSC, string sender, string receiverIFSC, string receiver, decimal amount) 
         {
             validateTransaction(senderIFSC, sender, receiverIFSC, receiver, amount);
             Account senderAcc = BankManager.Banks[senderIFSC].getAccount(sender);
@@ -90,7 +90,7 @@ namespace SharpBank.Services
 
         }
 
-        public void Withdraw(string accountNumber, string ifsc, decimal amount)
+        public static void Withdraw(string ifsc,string accountNumber, decimal amount)
         {
             try
             {
@@ -121,7 +121,7 @@ namespace SharpBank.Services
                 throw new AccountNumberException();
             }
         }
-        public void Deposit(string accountNumber, string ifsc, decimal amount)
+        public static void Deposit(string ifsc,string accountNumber, decimal amount)
         {
             try
             {

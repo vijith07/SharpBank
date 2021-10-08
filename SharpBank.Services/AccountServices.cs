@@ -10,7 +10,7 @@ namespace SharpBank.Services
 {
     public class AccountServices
     {
-        public List<Transaction> GetTransactionHistory(string accountNumber, string ifsc) {
+        public static List<Transaction> GetTransactionHistory(string ifsc, string accountNumber) {
             try
             {
                 BankManager.Banks[ifsc].getAccount(accountNumber);
@@ -33,7 +33,7 @@ namespace SharpBank.Services
                 throw new IFSCException();
             }
         }
-        public decimal GetBalance(string accountNumber, string ifsc)
+        public static decimal GetBalance(string ifsc, string accountNumber)
         {
             try
             {
