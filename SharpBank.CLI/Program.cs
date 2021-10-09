@@ -9,10 +9,10 @@ namespace SharpBank.CLI
         static void Main(string[] args)
         {
            
-            BankManagerServices.AddBank("Acksis Bank");
-            BankManagerServices.AddBank("Yaxis Bank");
-            BankManagerServices.AddBank("Puxis Bank");
-            BankManagerServices.AddBank("Yesu Bank");
+            BankManagerServices.AddBank("Axis Bank");
+            BankManagerServices.AddBank("ICICI Bank");
+            BankManagerServices.AddBank("HDFC Bank");
+            BankManagerServices.AddBank("Canara Bank");
 
             bool isRunning = true;
             int currentMenu = 0;
@@ -21,88 +21,100 @@ namespace SharpBank.CLI
             string userPassword = "";
             while (isRunning) { 
                 if (currentMenu == 0) {
-                    ShowMenu(currentMenu);
+                    Menu.BankMenu();
                     int bnk = Inputs.GetSelection();
                     userIFSC = bnk.ToString();
                     currentMenu++;
-                    
                 }
                 if (currentMenu == 1) {
-                    ShowMenu(currentMenu);
-                    int sel = Inputs.GetSelection();
-                    if (sel == 1) {
-                        Console.WriteLine("Enter Your Name");
-                        string userName = Console.ReadLine();
+                    Menu.LoginMenu();
+                    LoginOptions option = (LoginOptions)Enum.Parse(typeof(LoginOptions), Console.ReadLine());
+                    switch(option)
+                    {
+                        case LoginOptions.Create:
+                            Console.WriteLine("Enter Your Name");
+                            string userName = Console.ReadLine();
 
-                        Console.WriteLine("Enter Your Possword");
-                        userPassword = Console.ReadLine();
+                            Console.WriteLine("Enter Your Possword");
+                            userPassword = Console.ReadLine();
 
-                        userAccountNumber = BankServices.AddAccount(userIFSC, userName, userPassword);
-                        Console.WriteLine("Your account number is " + userAccountNumber + "  and bank IFSC " + userIFSC + " Dont forget it bsdk");
+                            userAccountNumber = BankServices.AddAccount(userIFSC, userName, userPassword);
+                            Console.WriteLine("Your account number is " + userAccountNumber + "  and bank IFSC " + userIFSC + " Dont forget it bsdk");
+                            break;
+                        case LoginOptions.Login:
+                            userAccountNumber = Inputs.GetAccountNumber();
+                            userPassword = Inputs.GetPassword();
+                            currentMenu++;
+                            break;
+                        case LoginOptions.Back:
+                            currentMenu--;
+                            break;
+                        case LoginOptions.Exit:
+                            isRunning = false;
+                            break;
                     }
-                    if (sel == 2) {
-                        userAccountNumber = Inputs.GetAccountNumber();
-                        userPassword = Inputs.GetPassword();
-                        currentMenu++;
-                    }
-                    if (sel == 3) currentMenu--;
-                    if (sel == 4) isRunning = false;
                 }
                 if (currentMenu == 2) {
-                    ShowMenu(currentMenu);
-                    int sel = Inputs.GetSelection();
+                    Menu.UserMenu();
+                    UserOptions option = (UserOptions)Enum.Parse(typeof(UserOptions), Console.ReadLine());
                     decimal amount = 0m;
-                    switch (sel)
+                    switch (option)
                     {
-                        case 1:
+                        case UserOptions.Deposit:
                             amount = Inputs.GetAmount();
                             TransactionServices.Deposit(userIFSC, userAccountNumber, amount);
                             break;
-                        case 2:
+                        case UserOptions.Withdraw:
                             amount = Inputs.GetAmount();
                             TransactionServices.Withdraw(userIFSC, userAccountNumber, amount);
                             break;
-                        case 3:
+                        case UserOptions.Transfer:
                             List<string> recp = Inputs.GetRecipient();
                             amount = Inputs.GetAmount();
                             TransactionServices.Transfer(userIFSC, userAccountNumber, recp[0], recp[1], amount);
                             break;
-                        case 4:
+                        case UserOptions.ShowBalance:
                             {
                                 Console.WriteLine("Your Balance is: " + AccountServices.GetBalance(userIFSC, userAccountNumber));
                                 break;
                             }
-                        case 5:
+                        case UserOptions.TransactionHistory:
                             List<Transaction> hist = AccountServices.GetTransactionHistory(userIFSC, userAccountNumber);
-                            foreach (Transaction t in hist) {
+                            foreach (Transaction t in hist)
+                            {
                                 Console.WriteLine(t.ToString());
                             }
                             break;
-                        case 6:
+                        case UserOptions.Exit:
                             currentMenu = 0;
                             break;
                         default:
                             Console.WriteLine("Invalid ma");
-
                             break;
+
                     }
 
                 }
-            
-            
-            
+       
             }
 
         }
-        public static void ShowMenu(int choice) {
-
-            switch (choice) {
-
-                case 0:Menu.BankMenu();break;
-                case 1:Menu.LoginMenu();break;
-                case 2:Menu.UserMenu();break;
-            }
+        public enum LoginOptions
+        {
+            Create=1,
+            Login,
+            Back,
+            Exit
         }
+        public enum UserOptions
+        {
+            Deposit=1,
+            Withdraw,
+            Transfer,
+            ShowBalance,
+            TransactionHistory,
+            Exit
 
+        }
     }
 }
