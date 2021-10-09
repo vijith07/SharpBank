@@ -179,5 +179,5 @@ Thank you to these people for their work
 [license-shield]: https://img.shields.io/github/license/midwicket/SharpBank.svg?style=for-the-badge
 [license-url]: https://github.com/midwicket/SharpBank/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/midwicket
+[linkedin-url]: https://linkedin.com/company/midwicket
 [product-screenshot]: images/screenshot.png
