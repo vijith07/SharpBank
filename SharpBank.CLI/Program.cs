@@ -2,23 +2,21 @@
 using System.Collections.Generic;
 using SharpBank.Services;
 using SharpBank.Models;
+using SharpBank.CLI.Controllers;
+
 namespace SharpBank.CLI
 {
     class Program
     {
         static void Main(string[] args)
         {
-           
-            BankManagerServices.AddBank("Axis Bank");
-            BankManagerServices.AddBank("ICICI Bank");
-            BankManagerServices.AddBank("HDFC Bank");
-            BankManagerServices.AddBank("Canara Bank");
+
+            
 
             bool isRunning = true;
             int currentMenu = 0;
+             Account acc=null;
             string userIFSC = "";
-            string userAccountNumber = "";
-            string userPassword = "";
             while (isRunning) { 
                 if (currentMenu == 0) {
                     Menu.BankMenu();
@@ -32,18 +30,13 @@ namespace SharpBank.CLI
                     switch(option)
                     {
                         case LoginOptions.Create:
-                            Console.WriteLine("Enter Your Name");
-                            string userName = Console.ReadLine();
-
-                            Console.WriteLine("Enter Your Possword");
-                            userPassword = Console.ReadLine();
-
-                            userAccountNumber = BankServices.AddAccount(userIFSC, userName, userPassword);
-                            Console.WriteLine("Your account number is " + userAccountNumber + "  and bank IFSC " + userIFSC + " Dont forget it bsdk");
+                            acc= AccountsController.CreateAccount(userIFSC);
+                            Console.WriteLine("Your account number is " + acc.AccountNumber + "  and bank IFSC " + acc.IFSC + " Dont forget it .");
                             break;
                         case LoginOptions.Login:
-                            userAccountNumber = Inputs.GetAccountNumber();
-                            userPassword = Inputs.GetPassword();
+                            string userAccountNumber = Inputs.GetAccountNumber();
+                            string userPassword = Inputs.GetPassword();
+                            acc = AccountsController.GetAccount(userIFSC, userAccountNumber);
                             currentMenu++;
                             break;
                         case LoginOptions.Back:
@@ -62,24 +55,25 @@ namespace SharpBank.CLI
                     {
                         case UserOptions.Deposit:
                             amount = Inputs.GetAmount();
-                            TransactionServices.Deposit(userIFSC, userAccountNumber, amount);
+                            TransactionServices.Deposit(acc ,amount);
                             break;
                         case UserOptions.Withdraw:
                             amount = Inputs.GetAmount();
-                            TransactionServices.Withdraw(userIFSC, userAccountNumber, amount);
+                            TransactionServices.Withdraw(acc , amount);
                             break;
                         case UserOptions.Transfer:
                             List<string> recp = Inputs.GetRecipient();
                             amount = Inputs.GetAmount();
-                            TransactionServices.Transfer(userIFSC, userAccountNumber, recp[0], recp[1], amount);
+                            Account recipAcc = AccountsController.GetAccount(recp[0], recp[1]);
+                            TransactionServices.Transfer(acc,  recipAcc,amount);
                             break;
                         case UserOptions.ShowBalance:
                             {
-                                Console.WriteLine("Your Balance is: " + AccountServices.GetBalance(userIFSC, userAccountNumber));
+                                Console.WriteLine("Your Balance is: " + AccountsController.GetBalance(acc));
                                 break;
                             }
                         case UserOptions.TransactionHistory:
-                            List<Transaction> hist = AccountServices.GetTransactionHistory(userIFSC, userAccountNumber);
+                            List<Transaction> hist = AccountServices.GetTransactionHistory(acc);
                             foreach (Transaction t in hist)
                             {
                                 Console.WriteLine(t.ToString());

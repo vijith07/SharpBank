@@ -18,6 +18,11 @@ namespace SharpBank.CLI
             Console.WriteLine("Please Enter Your Password :");
             return Console.ReadLine();
         }
+        public static string GetName()
+        {
+            Console.WriteLine("Please Enter Your Name :");
+            return Console.ReadLine();
+        }
         public static int GetSelection()
         {
             try
