@@ -8,43 +8,34 @@ using SharpBank.Models.Exceptions;
 
 namespace SharpBank.Services
 {
-    class BankServices
+    public static class BankServices
     {
         //Returns the account number generated
-        public string GenerateAccountNumber(string ifsc)
+        private static string GenerateIFSC()
         {
-            return (BankManager.Banks[ifsc].Count + 1).ToString();
+            string code = (Database.Banks.Count + 1).ToString();
+            return code;
         }
         
-        public string AddAccount(string name, string bankName, string ifsc, string password)
+        public static Bank AddBank(Bank bank)
         {
-            try
-            {
-                string number = GenerateAccountNumber(ifsc);
-                Account acc = new Account(number, name, password);
-                BankManager.Banks[ifsc].addAccount(acc);
-                return number;
-            }
-            catch (KeyNotFoundException e)
-            {
-                throw new IFSCException();
-            }
+            Database.Banks.Add(bank);
+            return bank;
         }
 
-        public void RemoveAccount(string accountNumber, string ifsc)
+        public static Bank GetBank(string ifsc) {
+
+            foreach (Bank b in Database.Banks) {
+                if (b.IFSC == ifsc)
+                {
+                    return b;
+                }
+            }
+            return null;
+        }
+        public static List<Bank> GetBanks()
         {
-            try
-            {
-                BankManager.Banks[ifsc].RemoveAccount(accountNumber);
-            }
-            catch (KeyNotFoundException e)
-            {
-                throw new IFSCException();
-            }
-            catch (ArgumentException e)
-            {
-                throw new AccountNumberException();
-            }
+            return Database.Banks;
         }
 
     }

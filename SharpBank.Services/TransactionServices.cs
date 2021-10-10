@@ -8,145 +8,178 @@ using SharpBank.Models.Exceptions;
 
 namespace SharpBank.Services
 {
-    class TransactionServices
+    public static class TransactionServices
     {
-        private string generateTransactionID() 
+
+            //AddTransaction(
+            //new Transaction
+            //{senderIFSC="",
+            //...
+
+            //}
+            
+            //)
+        public static Transaction AddTransaction(Transaction transaction)
         {
-            int serialNumber = BankManager.Transactions.Count + 1;
+            Database.Transactions.Add(transaction);
+            return transaction;
+        }
+
+        public static Transaction GetTransaction(string TransactionID)
+        {
+
+            var tx = Database.Transactions.FirstOrDefault(t => t.TransactionID == TransactionID);
+            return tx;
+        }
+
+        public static List<Transaction> GetTransactions()
+        {
+            return Database.Transactions;
+            
+        }
+
+
+        private static string generateTransactionID() 
+        {
+            int serialNumber = Database.Transactions.Count + 1;
             return serialNumber.ToString();
         }
-        private void validateTransaction(string senderIFSC, string sender, string receiverIFSC, string receiver, decimal amount)
-        {
-            try
-            {
-                if (BankManager.Banks[senderIFSC].getAccount(sender).Balance - amount < 0)
-                {
-                    throw new BalanceException();
-                }
-                BankManager.Banks[receiverIFSC].getAccount(receiver);
-            }
-            catch (ArgumentException e)
-            {
-                throw new AccountNumberException();
-            }
-            catch (KeyNotFoundException e) {
-                throw new IFSCException();
-            }
+        //private static void validateTransaction(string senderIFSC, string sender, string receiverIFSC, string receiver, decimal amount)
+        //{
+        //    try
+        //    {
+        //        if (amount < 0)
+        //        {
+        //            throw new FormatException();
+        //        }
+        //        if (BankManager.Banks[senderIFSC].getAccount(sender).Balance - amount < 0)
+        //        {
+        //            throw new BalanceException();
+        //        }
+        //        BankManager.Banks[receiverIFSC].getAccount(receiver);
+        //    }
+        //    catch (ArgumentException e)
+        //    {
+        //        throw new AccountNumberException();
+        //    }
+        //    catch (KeyNotFoundException e) {
+        //        throw new IFSCException();
+        //    }
         
-        }
-        private void validateTransaction(string ifsc, string accountNumber, decimal amount) {
-            try
-            {
-                if ((BankManager.Banks[ifsc].getAccount(accountNumber).Balance + amount) < 0)
-                {
-                    throw new BalanceException();
-                }
-            }
-            catch (ArgumentException e)
-            {
-                throw new AccountNumberException();
-            }
-            catch (KeyNotFoundException e)
-            {
-                throw new IFSCException();
-            }
+        //}
+        //private static void validateTransaction(string ifsc, string accountNumber, decimal amount) {
+        //    try
+        //    {
+        //        if ((BankManager.Banks[ifsc].getAccount(accountNumber).Balance + amount) < 0)
+        //        {
+        //            throw new BalanceException();
+        //        }
+        //    }
+        //    catch (ArgumentException e)
+        //    {
+        //        throw new AccountNumberException();
+        //    }
+        //    catch (KeyNotFoundException e)
+        //    {
+        //        throw new IFSCException();
+        //    }
 
-        }
-        private void AddTransaction(string senderIFSC, string sender, string receiverIFSC, string receiver,decimal amount) 
-        {
-            validateTransaction(senderIFSC,sender,receiverIFSC,receiver,amount);
-            string id = generateTransactionID();
-            Transaction txn = new Transaction(id, senderIFSC, sender, receiverIFSC, receiver, amount);
-            BankManager.Transactions.Add(txn);
-        }
-        private void AddTransaction(string ifsc, string accountNumber, decimal amount)
-        {
-            if (amount > 0)
-            {
+        //}
+        //private static void AddTransaction(string senderIFSC, string sender, string receiverIFSC, string receiver,decimal amount) 
+        //{
+        //    validateTransaction(senderIFSC,sender,receiverIFSC,receiver,amount);
+        //    string id = generateTransactionID();
+        //    Transaction txn = new Transaction(id, senderIFSC, sender, receiverIFSC, receiver, amount);
+        //    BankManager.Transactions.Add(txn);
+        //}
+        //private static void AddTransaction(string ifsc, string accountNumber, decimal amount)
+        //{
+        //    if (amount > 0)
+        //    {
                 
-                string id = generateTransactionID();
-                Transaction txn = new Transaction(id, "Deposit", "Deposit", ifsc, accountNumber, amount);
-                BankManager.Transactions.Add(txn);
+        //        string id = generateTransactionID();
+        //        Transaction txn = new Transaction(id, "Deposit", "Deposit", ifsc, accountNumber, amount);
+        //        BankManager.Transactions.Add(txn);
                 
-            }
-            else
-            {
-                string id = generateTransactionID();
-                Transaction txn = new Transaction(id, ifsc, accountNumber, "Withdraw", "Withdraw", amount);
-                BankManager.Transactions.Add(txn);
-            }
-        }
+        //    }
+        //    else
+        //    {
+        //        string id = generateTransactionID();
+        //        Transaction txn = new Transaction(id, ifsc, accountNumber, "Withdraw", "Withdraw", amount);
+        //        BankManager.Transactions.Add(txn);
+        //    }
+        //}
 
-        public void Transfer(string senderIFSC, string sender, string receiverIFSC, string receiver, decimal amount) 
-        {
-            validateTransaction(senderIFSC, sender, receiverIFSC, receiver, amount);
-            Account senderAcc = BankManager.Banks[senderIFSC].getAccount(sender);
-            Account receiverAcc = BankManager.Banks[receiverIFSC].getAccount(receiver);
-            senderAcc.Balance -= amount;
-            receiverAcc.Balance += amount;
-            BankManager.Banks[senderIFSC].setAccount(sender,senderAcc);
-            BankManager.Banks[receiverIFSC].setAccount(receiver,receiverAcc);
-            AddTransaction(senderIFSC, sender, receiverIFSC, receiver, amount);
+        //public static void Transfer(string senderIFSC, string sender, string receiverIFSC, string receiver, decimal amount) 
+        //{
+        //    validateTransaction(senderIFSC, sender, receiverIFSC, receiver, amount);
+        //    Account senderAcc = BankManager.Banks[senderIFSC].getAccount(sender);
+        //    Account receiverAcc = BankManager.Banks[receiverIFSC].getAccount(receiver);
+        //    senderAcc.Balance -= amount;
+        //    receiverAcc.Balance += amount;
+        //    BankManager.Banks[senderIFSC].setAccount(sender,senderAcc);
+        //    BankManager.Banks[receiverIFSC].setAccount(receiver,receiverAcc);
+        //    AddTransaction(senderIFSC, sender, receiverIFSC, receiver, amount);
 
-        }
+        //}
 
-        public void Withdraw(string accountNumber, string ifsc, decimal amount)
-        {
-            try
-            {
-                validateTransaction(ifsc, accountNumber, -amount);
-                Account acc = BankManager.Banks[ifsc].getAccount(accountNumber);
+        //public static void Withdraw(string ifsc,string accountNumber, decimal amount)
+        //{
+        //    try
+        //    {
+        //        validateTransaction(ifsc, accountNumber, -amount);
+        //        Account acc = BankManager.Banks[ifsc].getAccount(accountNumber);
 
-                if (acc.Balance - amount < 0)
-                {
-                    throw new BalanceException();
-                }
-                if (amount < 0)
-                {
-                    throw new FormatException();
-                }
+        //        if (acc.Balance - amount < 0)
+        //        {
+        //            throw new BalanceException();
+        //        }
+        //        if (amount < 0)
+        //        {
+        //            throw new FormatException();
+        //        }
 
-                acc.Balance -= amount;
+        //        acc.Balance -= amount;
 
-                BankManager.Banks[ifsc].setAccount(accountNumber, acc);
-                AddTransaction(ifsc, accountNumber, -amount);
+        //        BankManager.Banks[ifsc].setAccount(accountNumber, acc);
+        //        AddTransaction(ifsc, accountNumber, -amount);
 
-            }
-            catch (KeyNotFoundException e)
-            {
-                throw new IFSCException();
-            }
-            catch (ArgumentException e)
-            {
-                throw new AccountNumberException();
-            }
-        }
-        public void Deposit(string accountNumber, string ifsc, decimal amount)
-        {
-            try
-            {
-                Account acc = BankManager.Banks[ifsc].getAccount(accountNumber);
+        //    }
+        //    catch (KeyNotFoundException e)
+        //    {
+        //        throw new IFSCException();
+        //    }
+        //    catch (ArgumentException e)
+        //    {
+        //        throw new AccountNumberException();
+        //    }
+        //}
+        //public static void Deposit(string ifsc,string accountNumber, decimal amount)
+        //{
+        //    try
+        //    {
+        //        Account acc = BankManager.Banks[ifsc].getAccount(accountNumber);
 
-                if (amount < 0)
-                {
-                    throw new FormatException();
-                }
+        //        if (amount < 0)
+        //        {
+        //            throw new FormatException();
+        //        }
 
-                acc.Balance += amount;
+        //        acc.Balance += amount;
 
-                BankManager.Banks[ifsc].setAccount(accountNumber, acc);
-                AddTransaction(ifsc, accountNumber, amount);
+        //        BankManager.Banks[ifsc].setAccount(accountNumber, acc);
+        //        AddTransaction(ifsc, accountNumber, amount);
 
-            }
-            catch (KeyNotFoundException e)
-            {
-                throw new IFSCException();
-            }
-            catch (ArgumentException e)
-            {
-                throw new AccountNumberException();
-            }
-        }
+        //    }
+        //    catch (KeyNotFoundException e)
+        //    {
+        //        throw new IFSCException();
+        //    }
+        //    catch (ArgumentException e)
+        //    {
+        //        throw new AccountNumberException();
+        //    }
+        //}
 
     }
 }

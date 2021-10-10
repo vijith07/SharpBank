@@ -8,18 +8,13 @@ using SharpBank.Models.Exceptions;
 
 namespace SharpBank.Services
 {
-    class BankManagerServices
+   public static class BankManagerServices
     {
-        private string GenerateIFSC()
+        private static string GenerateIFSC()
         {
-            string code = (BankManager.Banks.Count + 1).ToString();
+            string code = (Database.Banks.Count + 1).ToString();
             return code;
         }
-        public string AddBank(string name)
-        {
-            Bank bank = new Bank(name, GenerateIFSC());
-            BankManager.Banks.Add(bank.IFSC,bank);
-            return bank.IFSC;
-        }
+
     }
 }

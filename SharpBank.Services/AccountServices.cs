@@ -10,43 +10,61 @@ namespace SharpBank.Services
 {
     public class AccountServices
     {
-        public List<Transaction> GetTransactionHistory(string accountNumber, string ifsc) {
-            try
-            {
-                BankManager.Banks[ifsc].getAccount(accountNumber);
-                List<Transaction> res = new List<Transaction>();
-                foreach (Transaction t in BankManager.Transactions)
-                {
-                    if (((t.SenderIFSC == ifsc) && (t.SenderAccount == accountNumber)) || ((t.RecepientIFSC == ifsc) && (t.RecepientAccount == accountNumber)))
-                    {
-                        res.Add(t);
-                    }
-                }
-                return res;
-            }
-            catch (ArgumentException e)
-            {
-                throw new AccountNumberException();
-            }
-            catch (KeyNotFoundException e)
-            {
-                throw new IFSCException();
-            }
+
+        public static Account AddAccount(Account acc)
+        {
+            Database.Accounts.Add(acc);
+            return acc;
         }
-        public decimal GetBalance(string accountNumber, string ifsc)
+        public static string GenerateAccountNumber(string ifsc)
+        {
+            return "00" + (Database.Accounts.Count + 1).ToString();
+        }
+
+        public static List<Account> GetAccounts()
+        {
+            return Database.Accounts;
+        }
+
+        public static Account GetAccount(string ifsc, string accountNumber)
+        {
+            foreach(Account a in AccountServices.GetAccounts())
+            {
+                if (a.AccountNumber == accountNumber && a.IFSC == ifsc)
+                {
+                    return a;
+                }
+            }
+            return null; 
+        }
+        public static void UpdateAccount(Account acc)
+        {
+            foreach (Account a in Database.Accounts)
+            {
+                if (a.AccountNumber == acc.AccountNumber && a.IFSC == acc.IFSC)
+                {
+                    a.Balance = acc.Balance;
+                    a.UserName = acc.UserName;
+         
+                }
+            }
+            
+        }
+        public static void RemoveAccount(string ifsc, string accountNumber)
         {
             try
             {
-                return BankManager.Banks[ifsc].getAccount(accountNumber).Balance;
-            }
-            catch (ArgumentException e)
-            {
-                throw new AccountNumberException();
+                throw new NotImplementedException();
             }
             catch (KeyNotFoundException e)
             {
                 throw new IFSCException();
             }
+            catch (ArgumentException e)
+            {
+                throw new AccountNumberException();
+            }
         }
+
     }
 }
