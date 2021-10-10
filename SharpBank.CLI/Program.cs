@@ -55,17 +55,17 @@ namespace SharpBank.CLI
                     {
                         case UserOptions.Deposit:
                             amount = Inputs.GetAmount();
-                            TransactionServices.Deposit(acc ,amount);
+                            TransactionsController.Deposit(acc ,amount);
                             break;
                         case UserOptions.Withdraw:
                             amount = Inputs.GetAmount();
-                            TransactionServices.Withdraw(acc , amount);
+                            TransactionsController.Withdraw(acc , amount);
                             break;
                         case UserOptions.Transfer:
                             List<string> recp = Inputs.GetRecipient();
                             amount = Inputs.GetAmount();
                             Account recipAcc = AccountsController.GetAccount(recp[0], recp[1]);
-                            TransactionServices.Transfer(acc,  recipAcc,amount);
+                            TransactionsController.Transfer(acc,  recipAcc,amount);
                             break;
                         case UserOptions.ShowBalance:
                             {
@@ -73,10 +73,10 @@ namespace SharpBank.CLI
                                 break;
                             }
                         case UserOptions.TransactionHistory:
-                            List<Transaction> hist = AccountServices.GetTransactionHistory(acc);
+                            List<Transaction> hist = TransactionsController.GetTransactionHistory(acc);
                             foreach (Transaction t in hist)
                             {
-                                Console.WriteLine(t.ToString());
+                                Console.WriteLine(Utilities.PrintReciept(t));
                             }
                             break;
                         case UserOptions.Exit:

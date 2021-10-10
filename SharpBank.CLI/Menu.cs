@@ -12,9 +12,11 @@ namespace SharpBank.CLI
         public static void BankMenu()
         {
             Console.WriteLine("Choose Your Bank");
-            foreach (var x in BankManagerServices.GetBanks()) 
+            int c = 1;
+            foreach (var x in BankServices.GetBanks()) 
             {
-                Console.WriteLine(x.Key + " -> " + x.Value.BankName);
+                Console.WriteLine(c + " -> " + x.BankName);
+                c += 1;
             }
         }
         public static void LoginMenu()

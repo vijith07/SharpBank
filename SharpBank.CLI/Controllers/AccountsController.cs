@@ -71,11 +71,10 @@ namespace SharpBank.CLI.Controllers
             }
             return null;
         }
-        public static decimal GetBalance(string ifsc, string accountNumber)
+        public static decimal GetBalance(Account acc)
         {
             try
             {
-                Account acc = AccountServices.GetAccount(ifsc, accountNumber);
                 if (acc == null)
                 {
                     throw new AccountNumberException();

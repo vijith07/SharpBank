@@ -27,7 +27,9 @@ namespace SharpBank.Services
 
         public static Transaction GetTransaction(string TransactionID)
         {
-            throw new NotImplementedException();
+
+            var tx = Database.Transactions.FirstOrDefault(t => t.TransactionID == TransactionID);
+            return tx;
         }
 
         public static List<Transaction> GetTransactions()
