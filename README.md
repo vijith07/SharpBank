@@ -30,7 +30,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/midwicket/SharpBank">
-<!--     <img src="images/logo.png" alt="Logo" width="80" height="80"> -->
+    <img src="https://user-images.githubusercontent.com/49370927/136691786-cd8cbc40-5bb7-4e22-a41c-b0931a4b5c39.png" alt="Logo" width="100" height="100">
   </a>
 
   <h3 align="center">Sharp Bank</h3>
