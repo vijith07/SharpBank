@@ -11,59 +11,41 @@ namespace SharpBank.Services
     public class AccountServices
     {
 
-        public static Account AddAccount(Account acc)
+        public long AddAccount(String name,String password,long BankId)
         {
-            Database.Accounts.Add(acc);
-            return acc;
-        }
-        public static string GenerateAccountNumber(string ifsc)
-        {
-            return "00" + (Database.Accounts.Count + 1).ToString();
-        }
-
-        public static List<Account> GetAccounts()
-        {
-            return Database.Accounts;
-        }
-
-        public static Account GetAccount(string ifsc, string accountNumber)
-        {
-            foreach(Account a in AccountServices.GetAccounts())
+            Account account = new Account
             {
-                if (a.AccountNumber == accountNumber && a.IFSC == ifsc)
-                {
-                    return a;
-                }
-            }
-            return null; 
+                Id = GenerateId(BankId),
+                Name = name,
+                Password = name,
+                Balance = 0m,
+                Gender = Models.Enums.Gender.Other,
+                Status = Models.Enums.Status.Active,
+                Transactions = new List<Transaction>()
+            };
+            Bank bank = Database.Banks.FirstOrDefault(b => b.Id == BankId);
+            bank.Accounts.Add(account);
+            return account.Id;
         }
-        public static void UpdateAccount(Account acc)
+        public long GenerateId(long BankId)
         {
-            foreach (Account a in Database.Accounts)
+            Random rand = new Random();
+            long Id =rand.Next(); ;
+            Bank bank = Database.Banks.FirstOrDefault(b => b.Id == BankId);
+            while (bank.Accounts.SingleOrDefault(acc => acc.Id == Id)!=null)
             {
-                if (a.AccountNumber == acc.AccountNumber && a.IFSC == acc.IFSC)
-                {
-                    a.Balance = acc.Balance;
-                    a.UserName = acc.UserName;
-         
-                }
+                Id = rand.Next();
             }
             
+            return Id;
         }
-        public static void RemoveAccount(string ifsc, string accountNumber)
+
+        public void UpdateBalance(long BankId,long AccountId,decimal Balance)
         {
-            try
-            {
-                throw new NotImplementedException();
-            }
-            catch (KeyNotFoundException e)
-            {
-                throw new IFSCException();
-            }
-            catch (ArgumentException e)
-            {
-                throw new AccountNumberException();
-            }
+            Bank bank = Database.Banks.FirstOrDefault(b => b.Id == BankId);
+            Account acc=bank.Accounts.SingleOrDefault(acc => acc.Id == AccountId);
+            acc.Balance = Balance;
+
         }
 
     }

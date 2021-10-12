@@ -8,35 +8,37 @@ using SharpBank.Models.Exceptions;
 
 namespace SharpBank.Services
 {
-    public static class BankServices
+    public class BankServices
     {
-        //Returns the account number generated
-        private static string GenerateIFSC()
+        public long GenerateId()
         {
-            string code = (Database.Banks.Count + 1).ToString();
-            return code;
-        }
-        
-        public static Bank AddBank(Bank bank)
-        {
-            Database.Banks.Add(bank);
-            return bank;
-        }
-
-        public static Bank GetBank(string ifsc) {
-
-            foreach (Bank b in Database.Banks) {
-                if (b.IFSC == ifsc)
-                {
-                    return b;
-                }
+            Random rand = new Random();
+            long Id = rand.Next(); ;
+            
+            while (Database.Banks.FirstOrDefault(b => b.Id == Id)!=null)
+            {
+                Id = rand.Next();
             }
-            return null;
+            return Id;
         }
-        public static List<Bank> GetBanks()
+
+        public long AddBank(string name)
         {
-            return Database.Banks;
-        }
+            Bank bank = new Bank
+            {
+                Id = GenerateId(),
+                Name = name,
+                CreatedBy = "Snake Babu",
+                CreatedOn = DateTime.Now,
+                UpdatedBy = "Snake Babu",
+                UpdatedOn = DateTime.UnixEpoch,
+                Accounts = new List<Account>()
+            };
+            Database.Banks.Add(bank);
+            return bank.Id;
+;        }
+
+        
 
     }
 }
