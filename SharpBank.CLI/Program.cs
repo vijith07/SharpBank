@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SharpBank.Services;
 using SharpBank.Models;
 using SharpBank.CLI.Controllers;
+using SharpBank.CLI.Enums;
 
 namespace SharpBank.CLI
 {
@@ -11,104 +12,112 @@ namespace SharpBank.CLI
         static void Main(string[] args)
         {
 
-            
 
-            bool isRunning = true;
+            Inputs inputs = new Inputs();
+            Datastore datastore = new Datastore();
+
+            BankService bankService = new BankService(datastore);
+            AccountServices accountService = new AccountServices(bankService);
+            TransactionService transactionService = new TransactionService(accountService);
+
+            BanksController banksController = new BanksController(bankService, inputs);
+            AccountsController accountsController = new AccountsController(accountService, inputs);
+            TransactionsController transactionsController = new TransactionsController(transactionService,accountService);
+            //SEED
+
+            banksController.CreateBank("Axis");
+            banksController.CreateBank("SBI");
+            banksController.CreateBank("HDFC");
+            banksController.CreateBank("ICICI");
+
+            Menu menu = new Menu();
+
             int currentMenu = 0;
-             Account acc=null;
-            string userIFSC = "";
-            while (isRunning) { 
-                if (currentMenu == 0) {
-                    Menu.BankMenu();
-                    int bnk = Inputs.GetSelection();
-                    userIFSC = bnk.ToString();
+            long userBankId = 0;
+            long userAccountId = 0;
+            while (true)
+            {
+                if (currentMenu == 0)
+                {
+                    menu.BankMenu(datastore,bankService);
+                    long bnk = inputs.GetSelection();
+                    userBankId = bnk;
                     currentMenu++;
                 }
-                if (currentMenu == 1) {
-                    Menu.LoginMenu();
+                if (currentMenu == 1)
+                {
+                    menu.LoginMenu();
                     LoginOptions option = (LoginOptions)Enum.Parse(typeof(LoginOptions), Console.ReadLine());
-                    switch(option)
+                    switch (option)
                     {
                         case LoginOptions.Create:
-                            acc= AccountsController.CreateAccount(userIFSC);
-                            Console.WriteLine("Your account number is " + acc.AccountNumber + "  and bank IFSC " + acc.IFSC + " Dont forget it .");
+                            userAccountId = accountsController.CreateAccount(userBankId);
+                            Console.WriteLine("Your account number is " + userAccountId.ToString("D10")+" and your BankID is " + userBankId.ToString("D10") + " Dont forget it .");
                             break;
                         case LoginOptions.Login:
-                            string userAccountNumber = Inputs.GetAccountNumber();
-                            string userPassword = Inputs.GetPassword();
-                            acc = AccountsController.GetAccount(userIFSC, userAccountNumber);
+                            userAccountId = inputs.GetAccountId();
+                            string userPassword = inputs.GetPassword();
+
                             currentMenu++;
                             break;
                         case LoginOptions.Back:
                             currentMenu--;
                             break;
                         case LoginOptions.Exit:
-                            isRunning = false;
+                            Environment.Exit(0);
                             break;
                     }
                 }
-                if (currentMenu == 2) {
-                    Menu.UserMenu();
+                if (currentMenu == 2)
+                {
+                    menu.UserMenu();
                     UserOptions option = (UserOptions)Enum.Parse(typeof(UserOptions), Console.ReadLine());
                     decimal amount = 0m;
                     switch (option)
                     {
                         case UserOptions.Deposit:
-                            amount = Inputs.GetAmount();
-                            TransactionsController.Deposit(acc ,amount);
+                            amount = inputs.GetAmount();
+                            transactionsController.Deposit(userBankId, userAccountId, amount);
                             break;
                         case UserOptions.Withdraw:
-                            amount = Inputs.GetAmount();
-                            TransactionsController.Withdraw(acc , amount);
+                            amount = inputs.GetAmount();
+                            transactionsController.Withdraw(userBankId, userAccountId, amount);
                             break;
                         case UserOptions.Transfer:
-                            List<string> recp = Inputs.GetRecipient();
-                            amount = Inputs.GetAmount();
-                            Account recipAcc = AccountsController.GetAccount(recp[0], recp[1]);
-                            TransactionsController.Transfer(acc,  recipAcc,amount);
+                            List<long> recp = inputs.GetRecipient();
+                            amount = inputs.GetAmount();
+
+                            transactionsController.Transfer(userBankId, userAccountId, recp[0], recp[1], amount);
                             break;
                         case UserOptions.ShowBalance:
                             {
-                                Console.WriteLine("Your Balance is: " + AccountsController.GetBalance(acc));
+                                Console.WriteLine("Your Balance is: " + accountsController.GetBalance(userBankId, userAccountId));
                                 break;
                             }
                         case UserOptions.TransactionHistory:
-                            List<Transaction> hist = TransactionsController.GetTransactionHistory(acc);
+                            List<Transaction> hist = accountsController.GetTransactionHistory(userBankId, userAccountId);
+
+                            Console.WriteLine("TransactionId | Source Bank | Source Account | Dest. Bank | Dest Account |  Amount  | Timestamp ");
+                            Console.WriteLine("-----------------------------------------------------------------------------------------------------------");
                             foreach (Transaction t in hist)
                             {
-                                Console.WriteLine(Utilities.PrintReciept(t));
+                                Console.WriteLine(t.ToString());
                             }
                             break;
                         case UserOptions.Exit:
                             currentMenu = 0;
                             break;
                         default:
-                            Console.WriteLine("Invalid ma");
+                            Console.WriteLine("Invalid Option");
                             break;
 
                     }
 
                 }
-       
+
             }
 
         }
-        public enum LoginOptions
-        {
-            Create=1,
-            Login,
-            Back,
-            Exit
-        }
-        public enum UserOptions
-        {
-            Deposit=1,
-            Withdraw,
-            Transfer,
-            ShowBalance,
-            TransactionHistory,
-            Exit
 
-        }
     }
 }
