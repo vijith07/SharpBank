@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using SharpBank.Services;
 using SharpBank.Models;
+using SharpBank.Models.Exceptions;
 using SharpBank.CLI.Controllers;
 using SharpBank.CLI.Enums;
 
@@ -35,6 +36,7 @@ namespace SharpBank.CLI
             int currentMenu = 0;
             string userBankId = "";
             string userAccountId = "";
+            string userPassword = "";
             while (true)
             {
                 if (currentMenu == 0)
@@ -52,25 +54,47 @@ namespace SharpBank.CLI
                     {
                         case LoginOptions.StaffLogin:
                             userAccountId = inputs.GetAccountId();
-                            string userPassword = inputs.GetPassword();
+                            userPassword = inputs.GetPassword();
                             try
                             {
                                 accountService.ValidateStaff(userBankId, userAccountId, userPassword);
                                 currentMenu++;
                                 currentMenu++;
                             }
-                            catch (UnauthorizedAccessException)
+                            catch (Models.Exceptions.UnauthorizedAccessException)
                             {
-                                conso
+                                Console.WriteLine("You are not Authorized to Access this Page");
+                            }
+                            catch (PasswordIncorrectException)
+                            {
+                                Console.WriteLine("Password Entered is Incorrect");
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Something is Wrong");
                             }
                             //userAccountId = accountsController.CreateAccount(userBankId);
                             //Console.WriteLine("Your account number is " + userAccountId.ToString("D10")+" and your BankID is " + userBankId.ToString("D10") + " Dont forget it .");
                             break;
                         case LoginOptions.CustomerLogin:
                             userAccountId = inputs.GetAccountId();
-                            string userPassword = inputs.GetPassword();
-
-                            currentMenu++;
+                            userPassword = inputs.GetPassword();
+                            try
+                            {
+                                accountService.ValidateUser(userBankId, userAccountId, userPassword);
+                                currentMenu++;
+                            }
+                            catch (PasswordIncorrectException)
+                            {
+                                Console.WriteLine("Password Entered is Incorrect");
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Something is Wrong");
+                            }
+                            
+                            //userAccountId = accountsController.CreateAccount(userBankId);
+                            //Console.WriteLine("Your account number is " + userAccountId.ToString("D10")+" and your BankID is " + userBankId.ToString("D10") + " Dont forget it .");
                             break;
                         case LoginOptions.Back:
                             currentMenu--;
@@ -96,7 +120,7 @@ namespace SharpBank.CLI
                             transactionsController.Withdraw(userBankId, userAccountId, amount);
                             break;
                         case UserOptions.Transfer:
-                            List<long> recp = inputs.GetRecipient();
+                            List<string> recp = inputs.GetRecipient();
                             amount = inputs.GetAmount();
 
                             transactionsController.Transfer(userBankId, userAccountId, recp[0], recp[1], amount);
@@ -116,8 +140,77 @@ namespace SharpBank.CLI
                                 Console.WriteLine(t.ToString());
                             }
                             break;
+                        case UserOptions.Back:
+                            currentMenu--;
+                            break;
                         case UserOptions.Exit:
-                            currentMenu = 0;
+                            Environment.Exit(0);
+                            break;
+                        default:
+                            Console.WriteLine("Invalid Option");
+                            break;
+
+                    }
+
+                }
+                if (currentMenu == 3)
+                {
+                    menu.StaffMenu();
+                    StaffOptions option = (StaffOptions)Enum.Parse(typeof(StaffOptions), Console.ReadLine());
+                    decimal amount = 0m;
+                    switch (option)
+                    {
+                        case StaffOptions.CreateAccount:
+                            string newuserAccountId = accountsController.CreateAccount(userBankId);
+                            Console.WriteLine("New Account is Created  account number is " + userAccountId +" and your BankID is " + userBankId + " and the password generated is '(first letter of the name in uppercase)@123'  Dont forget it .");
+                            break;
+                        case StaffOptions.UpdateAcount:
+                            //string newuserAccountId=i
+                            //transactionsController.Withdraw(userBankId, userAccountId, amount);
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.DeleteAccount:
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.ShowAccountTransactionHistory:
+                            userAccountId = inputs.GetAccountId();
+                            List<Transaction> hist = accountsController.GetTransactionHistory(userBankId, userAccountId);
+
+                            Console.WriteLine("TransactionId | Source Bank | Source Account | Dest. Bank | Dest Account |  Amount  | Timestamp ");
+                            Console.WriteLine("-----------------------------------------------------------------------------------------------------------");
+                            foreach (Transaction t in hist)
+                            {
+                                Console.WriteLine(t.ToString());
+                            }
+                            break;
+
+                        case StaffOptions.ShowBankTransactionHistory:
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.AddIMPSOther:
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.AddIMPSSame:
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.AddRTGSOther:
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.AddRTGSSame:
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.AddNewCurrency:
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.RevertTransaction:
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.Back:
+                            currentMenu--;
+                            currentMenu--;
+                            break;
+                        case StaffOptions.Exit:
+                            Environment.Exit(0);
                             break;
                         default:
                             Console.WriteLine("Invalid Option");

@@ -8,7 +8,7 @@ namespace SharpBank.CLI.Enums
 {
     public enum LoginOptions
     {
-        StaffLogin,
+        StaffLogin = 1,
         CustomerLogin,
         Back,
         Exit

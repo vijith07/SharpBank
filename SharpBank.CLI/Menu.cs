@@ -33,7 +33,7 @@ namespace SharpBank.CLI
             Console.WriteLine("-------------------------");
             Console.WriteLine("   1   | StaffLogin");
             Console.WriteLine("   2   | UserLogin");
-            Console.WriteLine("   3  | Back");
+            Console.WriteLine("   3   | Back");
             Console.WriteLine("   4   | Exit");
             Console.WriteLine("-------------------------");
         }
@@ -43,15 +43,20 @@ namespace SharpBank.CLI
             Console.WriteLine("Choose and Enter tHe option below");
             Console.WriteLine("Option | Description");
             Console.WriteLine("----------------------------------");
-            Console.WriteLine("   1   | Create Account");
-            Console.WriteLine("   2   | Deposit");
-            Console.WriteLine("   3   | Withdraw");
-            Console.WriteLine("   4   | Transfer");
-            Console.WriteLine("   5   | Show Balance");
-            Console.WriteLine("   6   | Show Transaction History");
-            Console.WriteLine("   7   | Add New Currency");
-            Console.WriteLine("   8   | Back");
-            Console.WriteLine("   9   | Exit");
+            Console.WriteLine("   1   | CreateAccount");
+            Console.WriteLine("   2   | Get Account Details");
+            Console.WriteLine("   3   | UpdateAcount");
+            Console.WriteLine("   4   | DeleteAccount");
+            Console.WriteLine("   5   | AddIMPSSame");
+            Console.WriteLine("   6   | AddIMPSOther");
+            Console.WriteLine("   7   | AddRTGSSame");
+            Console.WriteLine("   8   | AddRTGSOther");
+            Console.WriteLine("   9   | ShowAccountTransactionHistory");
+            Console.WriteLine("  10   | ShowBankTransactionHistory");
+            Console.WriteLine("  11   | RevertTransaction");
+            Console.WriteLine("  12   | AddNewCurrency");
+            Console.WriteLine("  13   | Back");
+            Console.WriteLine("  14   | Exit");
             Console.WriteLine("----------------------------------");
         }
         public void UserMenu()

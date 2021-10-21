@@ -63,13 +63,13 @@ namespace SharpBank.CLI
             Console.WriteLine("Please Enter The Amount :");
             return Convert.ToDecimal(Console.ReadLine());
         }
-        public List<long> GetRecipient()
+        public List<string> GetRecipient()
         {
-            List<long> res = new List<long>();
+            List<string> res = new List<string>();
             Console.WriteLine("Please Enter Recipient BankId");
-            res.Add(Convert.ToInt64(Console.ReadLine()));
+            res.Add(Console.ReadLine());
             Console.WriteLine("Please Enter Recipient Account number");
-            res.Add(Convert.ToInt64(Console.ReadLine()));
+            res.Add(Console.ReadLine());
             return res;
         }
     }

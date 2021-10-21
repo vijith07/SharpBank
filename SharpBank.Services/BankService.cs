@@ -37,7 +37,7 @@ namespace SharpBank.Services
             {
                 Id = "ADMIN",
                 Name = "ADMIN",
-                Password = "ADMIN",
+                Password = "ADMIN".GetHashCode().ToString(),
                 Balance = 0m,
                 Gender = Models.Enums.Gender.Other,
                 Status = Models.Enums.Status.Active,
