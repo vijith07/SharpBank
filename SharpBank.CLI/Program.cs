@@ -17,12 +17,12 @@ namespace SharpBank.CLI
             Datastore datastore = new Datastore();
 
             BankService bankService = new BankService(datastore);
-            AccountServices accountService = new AccountServices(bankService);
-            TransactionService transactionService = new TransactionService(accountService);
+            AccountService accountService = new AccountService(bankService);
+            TransactionService transactionService = new TransactionService(accountService, bankService);
 
             BanksController banksController = new BanksController(bankService, inputs);
             AccountsController accountsController = new AccountsController(accountService, inputs);
-            TransactionsController transactionsController = new TransactionsController(transactionService,accountService);
+            TransactionsController transactionsController = new TransactionsController(transactionService,accountService,inputs);
             //SEED
 
             banksController.CreateBank("Axis");
@@ -33,14 +33,14 @@ namespace SharpBank.CLI
             Menu menu = new Menu();
 
             int currentMenu = 0;
-            long userBankId = 0;
-            long userAccountId = 0;
+            string userBankId = "";
+            string userAccountId = "";
             while (true)
             {
                 if (currentMenu == 0)
                 {
                     menu.BankMenu(datastore,bankService);
-                    long bnk = inputs.GetSelection();
+                    string bnk = inputs.GetSelection();
                     userBankId = bnk;
                     currentMenu++;
                 }
@@ -50,11 +50,23 @@ namespace SharpBank.CLI
                     LoginOptions option = (LoginOptions)Enum.Parse(typeof(LoginOptions), Console.ReadLine());
                     switch (option)
                     {
-                        case LoginOptions.Create:
-                            userAccountId = accountsController.CreateAccount(userBankId);
-                            Console.WriteLine("Your account number is " + userAccountId.ToString("D10")+" and your BankID is " + userBankId.ToString("D10") + " Dont forget it .");
+                        case LoginOptions.StaffLogin:
+                            userAccountId = inputs.GetAccountId();
+                            string userPassword = inputs.GetPassword();
+                            try
+                            {
+                                accountService.ValidateStaff(userBankId, userAccountId, userPassword);
+                                currentMenu++;
+                                currentMenu++;
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                conso
+                            }
+                            //userAccountId = accountsController.CreateAccount(userBankId);
+                            //Console.WriteLine("Your account number is " + userAccountId.ToString("D10")+" and your BankID is " + userBankId.ToString("D10") + " Dont forget it .");
                             break;
-                        case LoginOptions.Login:
+                        case LoginOptions.CustomerLogin:
                             userAccountId = inputs.GetAccountId();
                             string userPassword = inputs.GetPassword();
 

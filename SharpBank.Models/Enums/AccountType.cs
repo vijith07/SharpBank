@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpBank.CLI.Enums
+namespace SharpBank.Models.Enums
 {
-    public enum LoginOptions
+    public enum AccountType
     {
-        StaffLogin,
-        CustomerLogin,
-        Back,
-        Exit
+        Staff=1,
+        Customer
     }
 }

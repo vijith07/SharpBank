@@ -13,24 +13,24 @@ namespace SharpBank.CLI.Controllers
 {
     class AccountsController
     {
-        private readonly AccountServices accountService;
+        private readonly AccountService accountService;
         private readonly Inputs inputs;
 
-        public AccountsController(AccountServices accountService, Inputs inputs)
+        public AccountsController(AccountService accountService, Inputs inputs)
         {
             this.accountService = accountService;
             this.inputs = inputs;
         }
-        public long CreateAccount(long bankId)
+        public string CreateAccount(string bankId)
         {
-            long id = 0;
+            string id = "";
             try
             {
                 string name = inputs.GetName();
                 string password = inputs.GetPassword();
                 Gender gender = inputs.GetGender();
-
-                id = accountService.AddAccount(name, bankId, gender);
+                AccountType type = inputs.GetAccountType();
+                id = accountService.AddAccount(name, bankId, gender,type);
             }
             catch (AccountIdException e)
             {
@@ -43,7 +43,7 @@ namespace SharpBank.CLI.Controllers
             }
             return id;
         }
-        public Account GetAccount(long bankId, long accountId)
+        public Account GetAccount(string bankId, string accountId)
         {
 
             try
@@ -62,7 +62,7 @@ namespace SharpBank.CLI.Controllers
             }
             return null;
         }
-        public decimal GetBalance(long bankId, long accountId)
+        public decimal GetBalance(string bankId, string accountId)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace SharpBank.CLI.Controllers
             }
             return -1m;
         }
-        public List<Transaction> GetTransactionHistory(long bankId, long accountId)
+        public List<Transaction> GetTransactionHistory(string bankId, string accountId)
         {
             List<Transaction> transactions = new List<Transaction>();
             try

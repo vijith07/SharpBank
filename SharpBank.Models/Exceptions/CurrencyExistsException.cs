@@ -4,13 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpBank.CLI.Enums
+namespace SharpBank.Models.Exceptions
 {
-    public enum LoginOptions
+    public class CurrencyExistsException:Exception
     {
-        StaffLogin,
-        CustomerLogin,
-        Back,
-        Exit
     }
 }

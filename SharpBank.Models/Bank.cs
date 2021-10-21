@@ -9,12 +9,18 @@ namespace SharpBank.Models
 {
     public class Bank
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public List<Account> Accounts { get; set; }
         public DateTime CreatedOn { get; set; }
         public string CreatedBy { get; set; }
         public DateTime UpdatedOn { get; set; }
         public string UpdatedBy { get; set; }
+        public Currency DefaultCurrency { get; set; }
+        public List<Currency> Currencies { get; set; }
+        public decimal RTGSToSame { get; set; }
+        public decimal RTGSToOther { get; set; }
+        public decimal IMPSToSame { get; set; }
+        public decimal IMPSToOther { get; set; }
     }
 }

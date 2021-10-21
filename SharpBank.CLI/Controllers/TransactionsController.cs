@@ -1,5 +1,6 @@
 ﻿using SharpBank.Models;
 using SharpBank.Models.Exceptions;
+using SharpBank.Models.Enums;
 using SharpBank.Services;
 using System;
 using System.Collections.Generic;
@@ -12,25 +13,27 @@ namespace SharpBank.CLI.Controllers
     class TransactionsController
     {
         private readonly TransactionService transactionService;
-        private readonly AccountServices accountService;
+        private readonly AccountService accountService;
+        private readonly Inputs inputs;
 
-        public TransactionsController(TransactionService transactionService, AccountServices accountService)
+
+        public TransactionsController(TransactionService transactionService, AccountService accountService, Inputs inputs)
         {
             this.transactionService = transactionService;
-            
+            this.inputs = inputs;
             this.accountService = accountService;
         }
-    public long Withdraw(long bankId, long accountId, decimal amount)
+    public string Withdraw(string bankId, string accountId, decimal amount)
         {
             
-            long id = 0;
+            string id = "";
             try
             {
                 if (amount < 0||amount<accountService.GetBalance(bankId,accountId))
                 {
                     throw new BalanceException();
                 }
-                id = transactionService.AddTransaction(bankId, accountId, 0, 0, amount);
+                id = transactionService.AddTransaction(bankId, accountId, "0000000000", "0000000000", amount,Models.Enums.Mode.Other);
             }
             catch (BalanceException)
             {
@@ -43,17 +46,17 @@ namespace SharpBank.CLI.Controllers
             }
             return id;
         }
-        public long Deposit(long bankId, long accountId, decimal amount)
+        public string Deposit(string bankId, string accountId, decimal amount)
         {
 
-            long id = 0;
+            string id = "";
             try
             {
                 if (amount < 0)
                 {
                     throw new BalanceException();
                 }
-                id = transactionService.AddTransaction(0, 0, bankId, accountId, amount);
+                id = transactionService.AddTransaction( "0000000000", "0000000000", bankId, accountId, amount, Models.Enums.Mode.Other);
             }
             catch (BalanceException)
             {
@@ -66,16 +69,17 @@ namespace SharpBank.CLI.Controllers
             }
             return id;
         }
-        public long Transfer(long sourceBankId, long sourceAccountId, long destinationBankId, long destinationAccountId, decimal amount)
+        public string Transfer(string sourceBankId, string sourceAccountId, string destinationBankId, string destinationAccountId, decimal amount)
         {
-            long id = 0;
+            string id = "";
             try
             {
                 if (amount < 0 || amount < accountService.GetBalance(sourceBankId, sourceAccountId))
                 {
                     throw new BalanceException();
                 }
-                id = transactionService.AddTransaction(sourceBankId, sourceAccountId, destinationBankId, destinationAccountId, amount);
+                Mode mode = inputs.GetTransactionMode();
+                id = transactionService.AddTransaction(sourceBankId, sourceAccountId, destinationBankId, destinationAccountId, amount,mode);
             }
             catch (BalanceException)
             {

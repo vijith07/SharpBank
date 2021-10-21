@@ -22,9 +22,9 @@ namespace SharpBank.CLI.Controllers
             this.inputs = inputs;
         }
 
-        public long CreateBank(string v)
+        public string CreateBank(string v)
         {
-            long id = 0;
+            string id = "";
             try
             {
                 string name = v;
@@ -44,7 +44,7 @@ namespace SharpBank.CLI.Controllers
 
 
         }
-        public Bank GetBank(long bankId)
+        public Bank GetBank(string bankId)
         {
 
             try

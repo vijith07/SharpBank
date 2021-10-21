@@ -10,10 +10,10 @@ namespace SharpBank.CLI
 {
     public class Inputs
     {
-        public long GetAccountId()
+        public string GetAccountId()
         {
             Console.WriteLine("Please Enter Your ID :");
-            return Convert.ToInt64(Console.ReadLine());
+            return Console.ReadLine();
         }
         public string GetPassword()
         {
@@ -31,20 +31,32 @@ namespace SharpBank.CLI
             Enum.TryParse(Console.ReadLine(), out Gender gender);
             return gender;
         }
-        public int GetSelection()
+        public AccountType GetAccountType()
+        {
+            Console.WriteLine("Please Enter The Account Type (Staff/Customer) :");
+            Enum.TryParse(Console.ReadLine(), out AccountType type);
+            return type;
+        }
+        public Mode GetTransactionMode()
+        {
+            Console.WriteLine("Please Enter The Transaction Mode (IMPS/RTGS) :");
+            Enum.TryParse(Console.ReadLine(), out Mode mode);
+            return mode;
+        }
+        public string GetSelection()
         {
             try
             {
                 Console.WriteLine("Please Enter Your Selection :");
 
-                return Convert.ToInt32(Console.ReadLine());
+                return Console.ReadLine();
             }
             catch (FormatException e)
             {
                 Console.WriteLine("Invalid Selection");
             }
             //Goback
-            return -1;
+            return "";
         }
         public decimal GetAmount()
         {
