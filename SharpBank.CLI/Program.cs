@@ -43,8 +43,15 @@ namespace SharpBank.CLI
                 {
                     menu.BankMenu(datastore,bankService);
                     string bnk = inputs.GetSelection();
-                    userBankId = bnk;
-                    currentMenu++;
+                    try
+                    {
+                        bankService.GetBank(bnk);
+                        userBankId = bnk;
+                        currentMenu++;
+                    }
+                    catch(BankIdException) {
+                        Console.WriteLine("Enter Valid Bank Details");
+                    }
                 }
                 if (currentMenu == 1)
                 {
@@ -92,9 +99,7 @@ namespace SharpBank.CLI
                             {
                                 Console.WriteLine("Something is Wrong");
                             }
-                            
-                            //userAccountId = accountsController.CreateAccount(userBankId);
-                            //Console.WriteLine("Your account number is " + userAccountId.ToString("D10")+" and your BankID is " + userBankId.ToString("D10") + " Dont forget it .");
+                           
                             break;
                         case LoginOptions.Back:
                             currentMenu--;
@@ -182,8 +187,7 @@ namespace SharpBank.CLI
                             Console.WriteLine("New Account is Created  account number is " + newuserAccountId +" and your BankID is " + userBankId + " and the password generated is '(first letter of the name in uppercase)@123'  Dont forget it .");
                             break;
                         case StaffOptions.UpdateAcount:
-                            //string newuserAccountId=i
-                            //transactionsController.Withdraw(userBankId, userAccountId, amount);
+                         
                             Console.WriteLine("Functionality Yet To be Implemented");
                             break;
                         case StaffOptions.DeleteAccount:
