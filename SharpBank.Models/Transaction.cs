@@ -23,7 +23,7 @@ namespace SharpBank.Models
         public Mode Mode { get; set; }
         public override string ToString()
         {
-            string res = $"  {Id}  | {SourceBankId}  |   {SourceAccountId}   |   {DestinationBankId}  |  {DestinationAccountId} | {Amount} | {On}";
+            string res = $"  {Id}  | {SourceBankId}  |   {SourceAccountId}   |   {DestinationBankId}  |  {DestinationAccountId} | {Amount} | {Amount-NetAmount} | {NetAmount} | {On}";
             return res;
         }
     }

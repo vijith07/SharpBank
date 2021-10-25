@@ -44,6 +44,17 @@ namespace SharpBank.Services
                 Type = Models.Enums.AccountType.Staff,
                 Transactions = new List<Transaction>()
             };
+            Account Cash = new Account
+            {
+                Id = "CASH",
+                Name = "CASH",
+                Password = "CASH".GetHashCode().ToString(),
+                Balance = 100000000000000000000000000m,
+                Gender = Models.Enums.Gender.Other,
+                Status = Models.Enums.Status.Active,
+                Type = Models.Enums.AccountType.Customer,
+                Transactions = new List<Transaction>()
+            };
             Bank bank = new Bank
             {
                 Id = GenerateId(name),
@@ -68,6 +79,7 @@ namespace SharpBank.Services
 
             };
             bank.Accounts.Add(Admin);
+            bank.Accounts.Add(Cash);
             datastore.Banks.Add(bank);
 
             return bank.Id;

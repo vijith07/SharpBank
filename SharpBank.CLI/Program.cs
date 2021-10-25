@@ -26,7 +26,7 @@ namespace SharpBank.CLI
             TransactionsController transactionsController = new TransactionsController(transactionService,accountService,inputs);
             //SEED
 
-            banksController.CreateBank("Axis");
+            banksController.CreateBank("AXIS");
             banksController.CreateBank("SBI");
             banksController.CreateBank("HDFC");
             banksController.CreateBank("ICICI");
@@ -133,7 +133,7 @@ namespace SharpBank.CLI
                         case UserOptions.TransactionHistory:
                             List<Transaction> hist = accountsController.GetTransactionHistory(userBankId, userAccountId);
 
-                            Console.WriteLine("TransactionId | Source Bank | Source Account | Dest. Bank | Dest Account |  Amount  | Timestamp ");
+                            Console.WriteLine("TransactionId    | Source Bank    | Source Account    | Dest. Bank    | Dest Account    |    Amount    |    Charges    |    NetAmount  |    Timestamp   ");
                             Console.WriteLine("-----------------------------------------------------------------------------------------------------------");
                             foreach (Transaction t in hist)
                             {
@@ -162,7 +162,7 @@ namespace SharpBank.CLI
                     {
                         case StaffOptions.CreateAccount:
                             string newuserAccountId = accountsController.CreateAccount(userBankId);
-                            Console.WriteLine("New Account is Created  account number is " + userAccountId +" and your BankID is " + userBankId + " and the password generated is '(first letter of the name in uppercase)@123'  Dont forget it .");
+                            Console.WriteLine("New Account is Created  account number is " + newuserAccountId +" and your BankID is " + userBankId + " and the password generated is '(first letter of the name in uppercase)@123'  Dont forget it .");
                             break;
                         case StaffOptions.UpdateAcount:
                             //string newuserAccountId=i

@@ -29,11 +29,12 @@ namespace SharpBank.CLI.Controllers
             string id = "";
             try
             {
-                if (amount < 0||amount<accountService.GetBalance(bankId,accountId))
+                if (amount < 0 || amount > accountService.GetBalance(bankId,accountId))
                 {
                     throw new BalanceException();
                 }
-                id = transactionService.AddTransaction(bankId, accountId, "0000000000", "0000000000", amount,Models.Enums.Mode.Other);
+                id = transactionService.AddTransaction(bankId, accountId, bankId, "CASH", amount,Models.Enums.Mode.Other);
+                Console.WriteLine("Transaction Successful");
             }
             catch (BalanceException)
             {
@@ -56,7 +57,8 @@ namespace SharpBank.CLI.Controllers
                 {
                     throw new BalanceException();
                 }
-                id = transactionService.AddTransaction( "0000000000", "0000000000", bankId, accountId, amount, Models.Enums.Mode.Other);
+                id = transactionService.AddTransaction(bankId, "CASH", bankId, accountId, amount, Models.Enums.Mode.Other);
+                Console.WriteLine("Transaction Successful");
             }
             catch (BalanceException)
             {
@@ -74,12 +76,13 @@ namespace SharpBank.CLI.Controllers
             string id = "";
             try
             {
-                if (amount < 0 || amount < accountService.GetBalance(sourceBankId, sourceAccountId))
+                if (amount < 0 || amount > accountService.GetBalance(sourceBankId, sourceAccountId))
                 {
                     throw new BalanceException();
                 }
                 Mode mode = inputs.GetTransactionMode();
                 id = transactionService.AddTransaction(sourceBankId, sourceAccountId, destinationBankId, destinationAccountId, amount,mode);
+                Console.WriteLine("Transaction Successful");
             }
             catch (BalanceException)
             {

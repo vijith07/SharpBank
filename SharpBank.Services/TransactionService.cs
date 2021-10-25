@@ -66,7 +66,7 @@ namespace SharpBank.Services
                 }
             }
             decimal charges= amount * rate;
-            accountService.UpdateBalance(sourceBankId, sourceAccountId, accountService.GetAccount(sourceBankId, sourceAccountId).Balance - (amount-charges));
+            accountService.UpdateBalance(sourceBankId, sourceAccountId, accountService.GetAccount(sourceBankId, sourceAccountId).Balance - amount);
             accountService.UpdateBalance(destinationBankId, destinationAccountId, accountService.GetAccount(destinationBankId, destinationAccountId).Balance + (amount-charges));
 
             Transaction transaction = new Transaction

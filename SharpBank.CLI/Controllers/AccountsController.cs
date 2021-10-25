@@ -27,7 +27,6 @@ namespace SharpBank.CLI.Controllers
             try
             {
                 string name = inputs.GetName();
-                string password = inputs.GetPassword();
                 Gender gender = inputs.GetGender();
                 AccountType type = inputs.GetAccountType();
                 id = accountService.AddAccount(name, bankId, gender,type);

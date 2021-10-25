@@ -61,7 +61,7 @@ namespace SharpBank.Services
             {
                 string timestamp = DateTime.UtcNow.ToString("yyMMddhmsf",
                                         System.Globalization.CultureInfo.InvariantCulture);
-                Id = name.Substring(0, 3) + timestamp;
+                Id = name.Substring(0, 3).ToUpper() + timestamp;
 
             }
             while (bank.Accounts.SingleOrDefault(b => b.Id == Id) != null);
