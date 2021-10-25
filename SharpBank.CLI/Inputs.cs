@@ -30,7 +30,7 @@ namespace SharpBank.CLI
             Console.WriteLine("Choose the Currency You would Like to add");
             foreach(string s in Currencies)
             {
-                Console.WriteLine(s)
+                Console.WriteLine(s);
             }
             Console.WriteLine("Please Enter The Code Carefully :");
 
