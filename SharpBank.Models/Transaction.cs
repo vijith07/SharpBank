@@ -19,11 +19,11 @@ namespace SharpBank.Models
         public decimal TransactionCharges { get; set; }
         public decimal  NetAmount { get; set; }
         public DateTime On { get; set; }
-        public Enums.Type Type { get; set; }
+        public TransactionType Type { get; set; }
         public Mode Mode { get; set; }
         public override string ToString()
         {
-            string res = $"  {Id}  | {SourceBankId}  |   {SourceAccountId}   |   {DestinationBankId}  |  {DestinationAccountId} | {Amount} | {Amount-NetAmount} | {NetAmount} | {On}";
+            string res = $"  {Id}  | {SourceBankId}  |   {SourceAccountId}   |   {DestinationBankId}  |  {DestinationAccountId}  |   {Mode}   |   {Type}  |   {Amount}   |   {Amount-NetAmount}   |  {NetAmount}   | {On}";
             return res;
         }
     }

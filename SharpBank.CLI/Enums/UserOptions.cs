@@ -13,7 +13,7 @@ namespace SharpBank.CLI.Enums
         Transfer,
         ShowBalance,
         TransactionHistory,
-        Back,
+        Logout,
         Exit
 
     }

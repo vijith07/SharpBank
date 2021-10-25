@@ -112,8 +112,10 @@ namespace SharpBank.CLI
                     switch (option)
                     {
                         case UserOptions.Deposit:
+                            Console.WriteLine("NOTE: ALL THE DEPOSITS WILL BE CONVERTED TO INR");
+                            string Code = inputs.GetCurrencyCode(banksController.GetCurrencies(bankService.GetAcceptedCurrencies(userBankId)));
                             amount = inputs.GetAmount();
-                            transactionsController.Deposit(userBankId, userAccountId, amount);
+                            transactionsController.Deposit(userBankId, userAccountId, amount,Code);
                             break;
                         case UserOptions.Withdraw:
                             amount = inputs.GetAmount();
@@ -122,8 +124,22 @@ namespace SharpBank.CLI
                         case UserOptions.Transfer:
                             List<string> recp = inputs.GetRecipient();
                             amount = inputs.GetAmount();
-
-                            transactionsController.Transfer(userBankId, userAccountId, recp[0], recp[1], amount);
+                            try
+                            {
+                                transactionsController.Transfer(userBankId, userAccountId, recp[0], recp[1], amount);
+                            }
+                            catch (BankIdException)
+                            {
+                                Console.WriteLine("Enter Valid Bank Details");
+                            }
+                            catch (AccountIdException)
+                            {
+                                Console.WriteLine("Enter Valid Account Details");
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Something is Wrong");
+                            }
                             break;
                         case UserOptions.ShowBalance:
                             {
@@ -133,14 +149,15 @@ namespace SharpBank.CLI
                         case UserOptions.TransactionHistory:
                             List<Transaction> hist = accountsController.GetTransactionHistory(userBankId, userAccountId);
 
-                            Console.WriteLine("TransactionId    | Source Bank    | Source Account    | Dest. Bank    | Dest Account    |    Amount    |    Charges    |    NetAmount  |    Timestamp   ");
-                            Console.WriteLine("-----------------------------------------------------------------------------------------------------------");
+                            Console.WriteLine("  TransactionId    | Source Bank    | Source Account    | Dest. Bank    | Dest Account    |    Mode    |    Type    |    Amount    |    Charges    |    NetAmount  |    Timestamp   ");
+                            Console.WriteLine("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                             foreach (Transaction t in hist)
                             {
                                 Console.WriteLine(t.ToString());
                             }
+                            Console.WriteLine("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                             break;
-                        case UserOptions.Back:
+                        case UserOptions.Logout:
                             currentMenu--;
                             break;
                         case UserOptions.Exit:
@@ -176,8 +193,8 @@ namespace SharpBank.CLI
                             userAccountId = inputs.GetAccountId();
                             List<Transaction> hist = accountsController.GetTransactionHistory(userBankId, userAccountId);
 
-                            Console.WriteLine("TransactionId | Source Bank | Source Account | Dest. Bank | Dest Account |  Amount  | Timestamp ");
-                            Console.WriteLine("-----------------------------------------------------------------------------------------------------------");
+                            Console.WriteLine("TransactionId     |     Source Bank     |    Source Account    |    Dest. Bank    |    Dest Account    |    Mode    |    Amount    |    Charges    |   NetAmount   |   Timestamp ");
+                            Console.WriteLine("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                             foreach (Transaction t in hist)
                             {
                                 Console.WriteLine(t.ToString());
@@ -200,12 +217,24 @@ namespace SharpBank.CLI
                             Console.WriteLine("Functionality Yet To be Implemented");
                             break;
                         case StaffOptions.AddNewCurrency:
-                            Console.WriteLine("Functionality Yet To be Implemented");
+                            string Code = inputs.GetCurrencyCode(banksController.GetCurrencies(datastore.Currencies));
+                            try
+                            {
+                                banksController.AddNewCurrency(userBankId, Code);
+                            }
+                            catch (InvalidCurrencyException)
+                            {
+                                Console.WriteLine("Currency does not exist ");
+                            }
+                            catch (CurrencyExistsException)
+                            {
+                                Console.WriteLine("Currency already exists ");
+                            }
                             break;
                         case StaffOptions.RevertTransaction:
                             Console.WriteLine("Functionality Yet To be Implemented");
                             break;
-                        case StaffOptions.Back:
+                        case StaffOptions.Logout:
                             currentMenu--;
                             currentMenu--;
                             break;

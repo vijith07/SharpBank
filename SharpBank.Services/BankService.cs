@@ -15,7 +15,7 @@ namespace SharpBank.Services
         public BankService(Datastore datastore)
         {
             this.datastore = datastore;
-            datastore.Banks.Add(new Bank { Id = "RBI0000000000", Name = "Reserve Bank", Accounts = new List<Account> { } });
+            
         }
         public string GenerateId(string name)
         { 
@@ -24,6 +24,10 @@ namespace SharpBank.Services
             {
                 string timestamp = DateTime.UtcNow.ToString("yyMMddhmsf",
                                         System.Globalization.CultureInfo.InvariantCulture);
+                while (name.Length < 3)
+                {
+                    name = name + '0';
+                }
                 Id = name.Substring(0, 3) + timestamp;
 
             }
@@ -67,12 +71,7 @@ namespace SharpBank.Services
                 RTGSToOther = 0.02m,
                 IMPSToSame = 0.05m,
                 RTGSToSame = 0m,
-                DefaultCurrency = new Currency
-                {
-                    Name = "Indian Rupee",
-                    Code = "INR",
-                    ExchangeRate = 1m
-                },
+                DefaultCurrency = datastore.Currencies.SingleOrDefault(c => c.Code == "INR"),
                 Currencies = new List<Currency>(),
                 Accounts = new List<Account>(),
                 
@@ -80,6 +79,7 @@ namespace SharpBank.Services
             };
             bank.Accounts.Add(Admin);
             bank.Accounts.Add(Cash);
+            bank.Currencies.Add(datastore.Currencies.SingleOrDefault(c => c.Code == "INR"));
             datastore.Banks.Add(bank);
 
             return bank.Id;
@@ -88,7 +88,12 @@ namespace SharpBank.Services
         public Bank GetBank(string bankId)
         {
 
-            return datastore.Banks.SingleOrDefault(b => b.Id == bankId);
+            Bank b= datastore.Banks.SingleOrDefault(b => b.Id == bankId);
+            if (b == null)
+            {
+                throw new BankIdException();
+            }
+            return b;
         }
         public List<string> GetBanks()
         {
@@ -100,20 +105,20 @@ namespace SharpBank.Services
             }
             return banks;
         }
-        public void AddCurrency(string bankId,string name,String code,decimal exchangeRate)
+        public void AddCurrency(string bankId,string code)
         {
             Bank bank = GetBank(bankId);
-            Currency currency = new Currency
-            {
-                Name = name,
-                Code = code,
-                ExchangeRate = exchangeRate,
-            };
+            Currency curr  = datastore.Currencies.SingleOrDefault(c => c.Code == code);
+
+            if ( curr== null) {
+                throw new InvalidCurrencyException();
+            }
+           
             if (bank.Currencies.SingleOrDefault(c => c.Code == code)!=null)
             {
                 throw new CurrencyExistsException();
             }
-            bank.Currencies.Add(currency);
+            bank.Currencies.Add(curr);
         }
         public void UpdateSameRTGS(string bankId,decimal rate)
         {
@@ -134,6 +139,16 @@ namespace SharpBank.Services
         {
             Bank bank = GetBank(bankId);
             bank.RTGSToOther = rate;
+        }
+        public List<Currency> GetAcceptedCurrencies(string bankId)
+        {
+            Bank bank = GetBank(bankId);
+            return bank.Currencies;
+        }
+        public Currency GetDefaultCurrency(string bankId)
+        {
+            Bank bank = GetBank(bankId);
+            return bank.DefaultCurrency;
         }
     }
 }

@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpBank.Models.Enums
+namespace SharpBank.Models.Exceptions
 {
-    public enum Type
+    public class BankIdException:Exception
     {
-        Credit=1,
-        Debit,
-        Sweep
+        
     }
 }

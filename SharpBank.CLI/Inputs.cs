@@ -25,6 +25,17 @@ namespace SharpBank.CLI
             Console.WriteLine("Please Enter The Name :");
             return Console.ReadLine();
         }
+        public string GetCurrencyCode(List<string> Currencies)
+        {
+            Console.WriteLine("Choose the Currency You would Like to add");
+            foreach(string s in Currencies)
+            {
+                Console.WriteLine(s);
+            }
+            Console.WriteLine("Please Enter The Code Carefully :");
+
+            return Console.ReadLine();
+        }
         public Gender GetGender()
         {
             Console.WriteLine("Please Enter Your Gender (Male/Female/Other) :");

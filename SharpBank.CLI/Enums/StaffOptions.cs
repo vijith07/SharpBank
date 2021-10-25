@@ -20,7 +20,7 @@ namespace SharpBank.CLI.Enums
          ShowBankTransactionHistory,
          RevertTransaction,
          AddNewCurrency,
-         Back,
+         Logout,
          Exit
     }
 }

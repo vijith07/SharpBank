@@ -31,7 +31,7 @@ namespace SharpBank.CLI.Controllers
                 id = bankService.AddBank(name);
 
             }
-            catch (IFSCException e)
+            catch (BankIdException e)
             {
 
                 Console.WriteLine("Bank already exists.");
@@ -44,28 +44,21 @@ namespace SharpBank.CLI.Controllers
 
 
         }
-        public Bank GetBank(string bankId)
+        public void AddNewCurrency(string bankId,string code)
         {
+            bankService.AddCurrency(bankId,code);
 
-            try
+        }
+        public List<string> GetCurrencies(List<Currency> currencies)
+        {
+            string s = "";
+            List<string> CurrencyList = new List<string>();
+            foreach (Currency curr in currencies)
             {
-                Bank b = bankService.GetBank(bankId);
-                if (b == null)
-                {
-                    throw new IFSCException();
-                }
-                return b;
+                s=curr.Code + " " + curr.Name + " " + curr.ExchangeRate.ToString();
+                CurrencyList.Add(s);
             }
-            catch (IFSCException e)
-            {
-
-                Console.WriteLine("Bank does not exist.");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Internal Error");
-            }
-            return null;
+            return CurrencyList;
         }
     }
 }

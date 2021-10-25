@@ -13,7 +13,6 @@ namespace SharpBank.Services
     {
         private readonly AccountService accountService;
         private readonly BankService bankService;
-
         public TransactionService(AccountService accountService, BankService bankService)
         {
             this.accountService = accountService;
@@ -36,7 +35,7 @@ namespace SharpBank.Services
                     (destinationAccount.Transactions.SingleOrDefault(t => t.Id == Id) != null));
             return Id;
         }
-        public string AddTransaction(string sourceBankId, string sourceAccountId, string destinationBankId, string destinationAccountId,decimal amount,Mode mode)
+        public string AddTransaction(string sourceBankId, string sourceAccountId, string destinationBankId, string destinationAccountId,decimal amount,Mode mode,TransactionType type)
         {
             decimal rate=0;
             if(mode == Mode.Other)
@@ -78,10 +77,12 @@ namespace SharpBank.Services
                 DestinationBankId = destinationBankId,
                 Mode=mode,
                 Amount = amount,
+                Type=type,
                 TransactionCharges=charges,
                 NetAmount=amount-charges,
                 On = DateTime.Now
             };
+
             accountService.GetAccount(sourceBankId, sourceAccountId).Transactions.Add(transaction);
             accountService.GetAccount(destinationBankId, destinationAccountId).Transactions.Add(transaction);
 
@@ -93,6 +94,17 @@ namespace SharpBank.Services
             Account account = accountService.GetAccount(bankId, accountId);
             var transaction = account.Transactions.SingleOrDefault(t => t.Id == TransactionId);
             return transaction;
+        }
+
+
+        public decimal ConvertToINR(string bankId,decimal amount,string code)
+        {
+            Currency curr = bankService.GetAcceptedCurrencies(bankId).SingleOrDefault(c => c.Code == code);
+            if (curr == null)
+            {
+                throw new InvalidCurrencyException();
+            }
+            return amount * curr.ExchangeRate;
         }
     }
 }

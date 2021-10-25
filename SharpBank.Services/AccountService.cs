@@ -17,20 +17,16 @@ namespace SharpBank.Services
         public AccountService(BankService bankService)
         {
             this.bankService = bankService;
-            Account acc = new Account
-            {
-                Name = "Cash",
-                Gender = Gender.Other,
-                Id = "RBI0000000000",
-                Balance = 0m,
-                Status = Status.Active,
-                Transactions = new List<Transaction>()
-            };
-            bankService.GetBank("RBI0000000000").Accounts.Add(acc);
+   
         }
         public Account GetAccount(string bankId, string accountId)
         {
-            return bankService.GetBank(bankId).Accounts.SingleOrDefault(a => a.Id == accountId);
+            Account acc= bankService.GetBank(bankId).Accounts.SingleOrDefault(a => a.Id == accountId);
+            if(acc==null)
+            {
+                throw new AccountNumberException();
+            }
+            return acc;
         }
         public decimal GetBalance(string bankId, string accountId)
         {
