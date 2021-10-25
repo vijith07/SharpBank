@@ -39,20 +39,48 @@ namespace SharpBank.CLI
         public Gender GetGender()
         {
             Console.WriteLine("Please Enter Your Gender (Male/Female/Other) :");
-            Enum.TryParse(Console.ReadLine(), out Gender gender);
-            return gender;
+            try
+            {
+                Enum.TryParse(Console.ReadLine(), out Gender gender);
+                return gender;
+
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid Selection");
+            }
+            return (Gender)1;
         }
         public AccountType GetAccountType()
         {
             Console.WriteLine("Please Enter The Account Type (Staff/Customer) :");
-            Enum.TryParse(Console.ReadLine(), out AccountType type);
-            return type;
+            
+            try
+            {
+                Enum.TryParse(Console.ReadLine(), out AccountType type);
+                return type;
+
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid Selection");
+            }
+            return (AccountType)2;
         }
         public Mode GetTransactionMode()
         {
             Console.WriteLine("Please Enter The Transaction Mode (IMPS/RTGS) :");
-            Enum.TryParse(Console.ReadLine(), out Mode mode);
-            return mode;
+
+            try
+            {
+                 Enum.TryParse(Console.ReadLine(), out Mode mode);
+                return mode;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid Selection");
+            }
+            return (Mode)3;
         }
         public string GetSelection()
         {
@@ -74,14 +102,16 @@ namespace SharpBank.CLI
             Console.WriteLine("Please Enter The Amount :");
             return Convert.ToDecimal(Console.ReadLine());
         }
-        public List<string> GetRecipient()
+        public string GetRecipientBankId()
         {
-            List<string> res = new List<string>();
             Console.WriteLine("Please Enter Recipient BankId");
-            res.Add(Console.ReadLine());
+            return Console.ReadLine();
+
+        }
+        public string GetRecipientAccountId()
+        {
             Console.WriteLine("Please Enter Recipient Account number");
-            res.Add(Console.ReadLine());
-            return res;
+            return Console.ReadLine();
         }
     }
 }

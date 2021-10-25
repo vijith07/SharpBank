@@ -35,25 +35,25 @@ namespace SharpBank.Services
                     (destinationAccount.Transactions.SingleOrDefault(t => t.Id == Id) != null));
             return Id;
         }
-        public string AddTransaction(string sourceBankId, string sourceAccountId, string destinationBankId, string destinationAccountId,decimal amount,Mode mode,TransactionType type)
+        public string AddTransaction(string sourceBankId, string sourceAccountId, string destinationBankId, string destinationAccountId, decimal amount, Mode mode, TransactionType type)
         {
-            decimal rate=0;
-            if(mode == Mode.Other)
+            decimal rate = 0;
+            if (mode == Mode.Other)
             {
                 rate = 0;
             }
-            else if(sourceBankId== destinationBankId)
+            else if (sourceBankId == destinationBankId)
             {
                 if (mode == Mode.IMPS)
                 {
                     rate = bankService.GetBank(sourceBankId).IMPSToSame;
                 }
-                else if(mode == Mode.RTGS)
+                else if (mode == Mode.RTGS)
                 {
                     rate = bankService.GetBank(sourceBankId).RTGSToSame;
                 }
             }
-            else if(sourceBankId != destinationBankId)
+            else if (sourceBankId != destinationBankId)
             {
                 if (mode == Mode.IMPS)
                 {
@@ -64,10 +64,13 @@ namespace SharpBank.Services
                     rate = bankService.GetBank(sourceBankId).RTGSToOther;
                 }
             }
-            decimal charges= amount * rate;
-            accountService.UpdateBalance(sourceBankId, sourceAccountId, accountService.GetAccount(sourceBankId, sourceAccountId).Balance - amount);
-            accountService.UpdateBalance(destinationBankId, destinationAccountId, accountService.GetAccount(destinationBankId, destinationAccountId).Balance + (amount-charges));
-
+            decimal charges = amount * rate;
+            if (sourceAccountId != "CASH")
+            {
+                accountService.UpdateBalance(sourceBankId, sourceAccountId, accountService.GetAccount(sourceBankId, sourceAccountId).Balance - amount);
+            } 
+            accountService.UpdateBalance(destinationBankId, destinationAccountId, accountService.GetAccount(destinationBankId, destinationAccountId).Balance + (amount - charges));
+            
             Transaction transaction = new Transaction
             {
                 Id = GenerateId(sourceBankId, sourceAccountId, destinationBankId, destinationAccountId),
@@ -77,14 +80,28 @@ namespace SharpBank.Services
                 DestinationBankId = destinationBankId,
                 Mode=mode,
                 Amount = amount,
-                Type=type,
+                Type=TransactionType.Debit,
                 TransactionCharges=charges,
                 NetAmount=amount-charges,
                 On = DateTime.Now
             };
 
             accountService.GetAccount(sourceBankId, sourceAccountId).Transactions.Add(transaction);
-            accountService.GetAccount(destinationBankId, destinationAccountId).Transactions.Add(transaction);
+            Transaction t2 = new Transaction {
+                Id=transaction.Id,
+                SourceAccountId = sourceAccountId,
+                DestinationAccountId = destinationAccountId,
+                SourceBankId = sourceBankId,
+                DestinationBankId = destinationBankId,
+                Mode = mode,
+                Amount = amount,
+                Type = TransactionType.Credit,
+                TransactionCharges = charges,
+                NetAmount = amount - charges,
+                On = DateTime.Now
+            };
+
+            accountService.GetAccount(destinationBankId, destinationAccountId).Transactions.Add(t2);
 
             return transaction.Id;
         }

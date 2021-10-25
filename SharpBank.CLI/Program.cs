@@ -127,11 +127,17 @@ namespace SharpBank.CLI
                             transactionsController.Withdraw(userBankId, userAccountId, amount);
                             break;
                         case UserOptions.Transfer:
-                            List<string> recp = inputs.GetRecipient();
-                            amount = inputs.GetAmount();
+                            
                             try
                             {
-                                transactionsController.Transfer(userBankId, userAccountId, recp[0], recp[1], amount);
+                                string recpBankId = inputs.GetRecipientBankId();
+                                bankService.GetBank(recpBankId);
+
+                                string recpAccountId = inputs.GetRecipientBankId();
+                                accountService.GetAccount(recpBankId, recpAccountId);
+
+                                amount = inputs.GetAmount();
+                                transactionsController.Transfer(userBankId, userAccountId, recpBankId, recpAccountId, amount);
                             }
                             catch (BankIdException)
                             {
