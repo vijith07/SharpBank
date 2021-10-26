@@ -35,41 +35,16 @@ namespace SharpBank.Services
                     (destinationAccount.Transactions.SingleOrDefault(t => t.Id == Id) != null));
             return Id;
         }
-        public string AddTransaction(string sourceBankId, string sourceAccountId, string destinationBankId, string destinationAccountId, decimal amount, Mode mode, TransactionType type)
+        public string AddTransaction(string sourceBankId, string sourceAccountId, string destinationBankId, string destinationAccountId,decimal totalAmount ,decimal amount, Mode mode, TransactionType type)
         {
-            decimal rate = 0;
-            if (mode == Mode.Other)
-            {
-                rate = 0;
-            }
-            else if (sourceBankId == destinationBankId)
-            {
-                if (mode == Mode.IMPS)
-                {
-                    rate = bankService.GetBank(sourceBankId).IMPSToSame;
-                }
-                else if (mode == Mode.RTGS)
-                {
-                    rate = bankService.GetBank(sourceBankId).RTGSToSame;
-                }
-            }
-            else if (sourceBankId != destinationBankId)
-            {
-                if (mode == Mode.IMPS)
-                {
-                    rate = bankService.GetBank(sourceBankId).IMPSToOther;
-                }
-                else if (mode == Mode.RTGS)
-                {
-                    rate = bankService.GetBank(sourceBankId).RTGSToOther;
-                }
-            }
-            decimal charges = amount * rate;
+            
+            decimal charges = totalAmount-amount;
+
             if (sourceAccountId != "CASH")
             {
-                accountService.UpdateBalance(sourceBankId, sourceAccountId, accountService.GetAccount(sourceBankId, sourceAccountId).Balance - amount);
+                accountService.UpdateBalance(sourceBankId, sourceAccountId, accountService.GetAccount(sourceBankId, sourceAccountId).Balance - totalAmount);
             } 
-            accountService.UpdateBalance(destinationBankId, destinationAccountId, accountService.GetAccount(destinationBankId, destinationAccountId).Balance + (amount - charges));
+            accountService.UpdateBalance(destinationBankId, destinationAccountId, accountService.GetAccount(destinationBankId, destinationAccountId).Balance + amount);
             
             Transaction transaction = new Transaction
             {
@@ -79,10 +54,10 @@ namespace SharpBank.Services
                 SourceBankId = sourceBankId,
                 DestinationBankId = destinationBankId,
                 Mode=mode,
-                Amount = amount,
+                Amount = totalAmount,
                 Type=TransactionType.Debit,
                 TransactionCharges=charges,
-                NetAmount=amount-charges,
+                NetAmount=amount,
                 On = DateTime.Now
             };
 
@@ -94,10 +69,10 @@ namespace SharpBank.Services
                 SourceBankId = sourceBankId,
                 DestinationBankId = destinationBankId,
                 Mode = mode,
-                Amount = amount,
+                Amount = totalAmount,
                 Type = TransactionType.Credit,
                 TransactionCharges = charges,
-                NetAmount = amount - charges,
+                NetAmount = amount,
                 On = DateTime.Now
             };
 
@@ -122,6 +97,32 @@ namespace SharpBank.Services
                 throw new InvalidCurrencyException();
             }
             return amount * curr.ExchangeRate;
+        }
+        public decimal GetTransactionRate(string sourceBankId,string destinationBankId,Mode mode)
+        {
+            if (sourceBankId == destinationBankId)
+            {
+                if (mode == Mode.IMPS) {
+                    return bankService.GetBank(sourceBankId).IMPSToSame; 
+                }
+                else if (mode == Mode.RTGS)
+                {
+                    return bankService.GetBank(sourceBankId).RTGSToSame;
+                }
+                return 0m;
+            }
+            else
+            {
+                if (mode == Mode.IMPS)
+                {
+                    return bankService.GetBank(sourceBankId).IMPSToOther;
+                }
+                else if (mode == Mode.RTGS)
+                {
+                    return bankService.GetBank(sourceBankId).RTGSToOther;
+                }
+                return 0m;
+            }
         }
     }
 }

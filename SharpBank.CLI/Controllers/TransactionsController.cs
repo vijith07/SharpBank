@@ -33,7 +33,7 @@ namespace SharpBank.CLI.Controllers
                 {
                     throw new BalanceException();
                 }
-                id = transactionService.AddTransaction(bankId, accountId, bankId, "CASH", amount,Models.Enums.Mode.Other, TransactionType.Debit);
+                id = transactionService.AddTransaction(bankId, accountId, bankId, "CASH", amount,amount,Models.Enums.Mode.Other, TransactionType.Debit);
                 Console.WriteLine("Transaction Successful");
             }
             catch (BalanceException)
@@ -58,7 +58,7 @@ namespace SharpBank.CLI.Controllers
                 {
                     throw new BalanceException();
                 }
-                id = transactionService.AddTransaction(bankId, "CASH", bankId, accountId, amount, Models.Enums.Mode.Other, TransactionType.Credit);
+                id = transactionService.AddTransaction(bankId, "CASH", bankId, accountId, amount,amount, Models.Enums.Mode.Other, TransactionType.Credit);
                 Console.WriteLine("Transaction Successful");
             }
             catch (InvalidCurrencyException)
@@ -82,13 +82,23 @@ namespace SharpBank.CLI.Controllers
             string id = "";
             try
             {
-                if (amount < 0 || amount > accountService.GetBalance(sourceBankId, sourceAccountId))
+                Mode mode = inputs.GetTransactionMode();
+                decimal rate = transactionService.GetTransactionRate(sourceBankId, destinationBankId, mode);
+                decimal totalAmount = amount / (1m - rate);
+                
+                if (totalAmount < 0 || totalAmount > accountService.GetBalance(sourceBankId, sourceAccountId))
                 {
                     throw new BalanceException();
                 }
-                Mode mode = inputs.GetTransactionMode();
-                id = transactionService.AddTransaction(sourceBankId, sourceAccountId, destinationBankId, destinationAccountId, amount,mode,TransactionType.Debit);
-                Console.WriteLine("Transaction Successful");
+                if(GenerateBill(amount, totalAmount,destinationBankId,destinationAccountId,mode))
+                {
+                    id = transactionService.AddTransaction(sourceBankId, sourceAccountId, destinationBankId, destinationAccountId, totalAmount, amount, mode, TransactionType.Debit);
+                    Console.WriteLine("Transaction Successful : " + id);
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (BalanceException)
             {
@@ -97,10 +107,26 @@ namespace SharpBank.CLI.Controllers
             catch (Exception)
             {
                 Console.WriteLine("Internal Error");
-
             }
             return id;
         }
+        public bool GenerateBill(decimal amount ,decimal totalAmount,string bankId,string accountId,Mode mode)
+        {
+            Console.WriteLine("Transaction Summary");
+            Console.WriteLine("-------------------------------------------------------------------------------------------------");
+            Console.WriteLine("TO: Bank ID: "+bankId+" Account ID: "+accountId+" Mode: "+mode.ToString());
+            Console.WriteLine("Amount             :  " + amount.ToString() + "/-");
+            Console.WriteLine("Transaction Charges: +" + (totalAmount-amount).ToString() + "/-");
+            Console.WriteLine("Total Amount       : =" + (totalAmount).ToString() + "/-");
+            Console.WriteLine("------------------------------------------------------------------------------------------------");
 
+            Console.WriteLine("Would you like to proceed?((Yes/1/y)/No)");
+            string s = Console.ReadLine();
+            if (s == "1" || s == "Yes" || s == "y" || s == "Y"|| s == "yes")
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

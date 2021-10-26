@@ -133,7 +133,7 @@ namespace SharpBank.CLI
                                 string recpBankId = inputs.GetRecipientBankId();
                                 bankService.GetBank(recpBankId);
 
-                                string recpAccountId = inputs.GetRecipientBankId();
+                                string recpAccountId = inputs.GetRecipientAccountId();
                                 accountService.GetAccount(recpBankId, recpAccountId);
 
                                 amount = inputs.GetAmount();
