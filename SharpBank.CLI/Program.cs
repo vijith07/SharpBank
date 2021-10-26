@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using SharpBank.Services;
 using SharpBank.Models;
+using SharpBank.Models.Exceptions;
 using SharpBank.CLI.Controllers;
+using SharpBank.CLI.Enums;
 
 namespace SharpBank.CLI
 {
@@ -11,104 +13,255 @@ namespace SharpBank.CLI
         static void Main(string[] args)
         {
 
-            
 
-            bool isRunning = true;
+            Inputs inputs = new Inputs();
+            Datastore datastore = new Datastore();
+
+            BankService bankService = new BankService(datastore);
+            AccountService accountService = new AccountService(bankService);
+            TransactionService transactionService = new TransactionService(accountService, bankService);
+
+            BanksController banksController = new BanksController(bankService, inputs);
+            AccountsController accountsController = new AccountsController(accountService, inputs);
+            TransactionsController transactionsController = new TransactionsController(transactionService,accountService,inputs);
+            //SEED
+
+            banksController.CreateBank("AXIS");
+            banksController.CreateBank("SBI");
+            banksController.CreateBank("HDFC");
+            banksController.CreateBank("ICICI");
+
+            Menu menu = new Menu();
+
             int currentMenu = 0;
-             Account acc=null;
-            string userIFSC = "";
-            while (isRunning) { 
-                if (currentMenu == 0) {
-                    Menu.BankMenu();
-                    int bnk = Inputs.GetSelection();
-                    userIFSC = bnk.ToString();
-                    currentMenu++;
-                }
-                if (currentMenu == 1) {
-                    Menu.LoginMenu();
-                    LoginOptions option = (LoginOptions)Enum.Parse(typeof(LoginOptions), Console.ReadLine());
-                    switch(option)
+            string userBankId = "";
+            string userAccountId = "";
+            string userPassword = "";
+            while (true)
+            {
+                if (currentMenu == 0)
+                {
+                    menu.BankMenu(datastore,bankService);
+                    string bnk = inputs.GetSelection();
+                    try
                     {
-                        case LoginOptions.Create:
-                            acc= AccountsController.CreateAccount(userIFSC);
-                            Console.WriteLine("Your account number is " + acc.AccountNumber + "  and bank IFSC " + acc.IFSC + " Dont forget it .");
+                        bankService.GetBank(bnk);
+                        userBankId = bnk;
+                        currentMenu++;
+                    }
+                    catch(BankIdException) {
+                        Console.WriteLine("Enter Valid Bank Details");
+                    }
+                }
+                if (currentMenu == 1)
+                {
+                    menu.LoginMenu();
+                    LoginOptions option = (LoginOptions)Enum.Parse(typeof(LoginOptions), Console.ReadLine());
+                    switch (option)
+                    {
+                        case LoginOptions.StaffLogin:
+                            userAccountId = inputs.GetAccountId();
+                            userPassword = inputs.GetPassword();
+                            try
+                            {
+                                accountService.ValidateStaff(userBankId, userAccountId, userPassword);
+                                currentMenu++;
+                                currentMenu++;
+                            }
+                            catch (Models.Exceptions.UnauthorizedAccessException)
+                            {
+                                Console.WriteLine("You are not Authorized to Access this Page");
+                            }
+                            catch (PasswordIncorrectException)
+                            {
+                                Console.WriteLine("Password Entered is Incorrect");
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Something is Wrong");
+                            }
+                            //userAccountId = accountsController.CreateAccount(userBankId);
+                            //Console.WriteLine("Your account number is " + userAccountId.ToString("D10")+" and your BankID is " + userBankId.ToString("D10") + " Dont forget it .");
                             break;
-                        case LoginOptions.Login:
-                            string userAccountNumber = Inputs.GetAccountNumber();
-                            string userPassword = Inputs.GetPassword();
-                            acc = AccountsController.GetAccount(userIFSC, userAccountNumber);
-                            currentMenu++;
+                        case LoginOptions.CustomerLogin:
+                            userAccountId = inputs.GetAccountId();
+                            userPassword = inputs.GetPassword();
+                            try
+                            {
+                                accountService.ValidateUser(userBankId, userAccountId, userPassword);
+                                currentMenu++;
+                            }
+                            catch (PasswordIncorrectException)
+                            {
+                                Console.WriteLine("Password Entered is Incorrect");
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Something is Wrong");
+                            }
+                           
                             break;
                         case LoginOptions.Back:
                             currentMenu--;
                             break;
                         case LoginOptions.Exit:
-                            isRunning = false;
+                            Environment.Exit(0);
                             break;
                     }
                 }
-                if (currentMenu == 2) {
-                    Menu.UserMenu();
+                if (currentMenu == 2)
+                {
+                    menu.UserMenu();
                     UserOptions option = (UserOptions)Enum.Parse(typeof(UserOptions), Console.ReadLine());
                     decimal amount = 0m;
                     switch (option)
                     {
                         case UserOptions.Deposit:
-                            amount = Inputs.GetAmount();
-                            TransactionsController.Deposit(acc ,amount);
+                            Console.WriteLine("NOTE: ALL THE DEPOSITS WILL BE CONVERTED TO INR");
+                            string Code = inputs.GetCurrencyCode(banksController.GetCurrencies(bankService.GetAcceptedCurrencies(userBankId)));
+                            amount = inputs.GetAmount();
+                            transactionsController.Deposit(userBankId, userAccountId, amount,Code);
                             break;
                         case UserOptions.Withdraw:
-                            amount = Inputs.GetAmount();
-                            TransactionsController.Withdraw(acc , amount);
+                            amount = inputs.GetAmount();
+                            transactionsController.Withdraw(userBankId, userAccountId, amount);
                             break;
                         case UserOptions.Transfer:
-                            List<string> recp = Inputs.GetRecipient();
-                            amount = Inputs.GetAmount();
-                            Account recipAcc = AccountsController.GetAccount(recp[0], recp[1]);
-                            TransactionsController.Transfer(acc,  recipAcc,amount);
+                            
+                            try
+                            {
+                                string recpBankId = inputs.GetRecipientBankId();
+                                bankService.GetBank(recpBankId);
+
+                                string recpAccountId = inputs.GetRecipientAccountId();
+                                accountService.GetAccount(recpBankId, recpAccountId);
+
+                                amount = inputs.GetAmount();
+                                transactionsController.Transfer(userBankId, userAccountId, recpBankId, recpAccountId, amount);
+                            }
+                            catch (BankIdException)
+                            {
+                                Console.WriteLine("Enter Valid Bank Details");
+                            }
+                            catch (AccountIdException)
+                            {
+                                Console.WriteLine("Enter Valid Account Details");
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Something is Wrong");
+                            }
                             break;
                         case UserOptions.ShowBalance:
                             {
-                                Console.WriteLine("Your Balance is: " + AccountsController.GetBalance(acc));
+                                Console.WriteLine("Your Balance is: " + accountsController.GetBalance(userBankId, userAccountId));
                                 break;
                             }
                         case UserOptions.TransactionHistory:
-                            List<Transaction> hist = TransactionsController.GetTransactionHistory(acc);
+                            List<Transaction> hist = accountsController.GetTransactionHistory(userBankId, userAccountId);
+
+                            Console.WriteLine("  TransactionId    | Source Bank    | Source Account    | Dest. Bank    | Dest Account    |    Mode    |    Type    |    Amount    |    Charges    |    NetAmount  |    Timestamp   ");
+                            Console.WriteLine("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                             foreach (Transaction t in hist)
                             {
-                                Console.WriteLine(Utilities.PrintReciept(t));
+                                Console.WriteLine(t.ToString());
                             }
+                            Console.WriteLine("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                            break;
+                        case UserOptions.Logout:
+                            currentMenu--;
                             break;
                         case UserOptions.Exit:
-                            currentMenu = 0;
+                            Environment.Exit(0);
                             break;
                         default:
-                            Console.WriteLine("Invalid ma");
+                            Console.WriteLine("Invalid Option");
                             break;
 
                     }
 
                 }
-       
+                if (currentMenu == 3)
+                {
+                    menu.StaffMenu();
+                    StaffOptions option = (StaffOptions)Enum.Parse(typeof(StaffOptions), Console.ReadLine());
+                    decimal amount = 0m;
+                    switch (option)
+                    {
+                        case StaffOptions.CreateAccount:
+                            string newuserAccountId = accountsController.CreateAccount(userBankId);
+                            Console.WriteLine("New Account is Created  account number is " + newuserAccountId +" and your BankID is " + userBankId + " and the password generated is '(first letter of the name in uppercase)@123'  Dont forget it .");
+                            break;
+                        case StaffOptions.UpdateAcount:
+                         
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.DeleteAccount:
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.ShowAccountTransactionHistory:
+                            userAccountId = inputs.GetAccountId();
+                            List<Transaction> hist = accountsController.GetTransactionHistory(userBankId, userAccountId);
+
+                            Console.WriteLine("TransactionId     |     Source Bank     |    Source Account    |    Dest. Bank    |    Dest Account    |    Mode    |    Amount    |    Charges    |   NetAmount   |   Timestamp ");
+                            Console.WriteLine("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                            foreach (Transaction t in hist)
+                            {
+                                Console.WriteLine(t.ToString());
+                            }
+                            break;
+
+                        case StaffOptions.ShowBankTransactionHistory:
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.AddIMPSOther:
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.AddIMPSSame:
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.AddRTGSOther:
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.AddRTGSSame:
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.AddNewCurrency:
+                            string Code = inputs.GetCurrencyCode(banksController.GetCurrencies(datastore.Currencies));
+                            try
+                            {
+                                banksController.AddNewCurrency(userBankId, Code);
+                            }
+                            catch (InvalidCurrencyException)
+                            {
+                                Console.WriteLine("Currency does not exist ");
+                            }
+                            catch (CurrencyExistsException)
+                            {
+                                Console.WriteLine("Currency already exists ");
+                            }
+                            break;
+                        case StaffOptions.RevertTransaction:
+                            Console.WriteLine("Functionality Yet To be Implemented");
+                            break;
+                        case StaffOptions.Logout:
+                            currentMenu--;
+                            currentMenu--;
+                            break;
+                        case StaffOptions.Exit:
+                            Environment.Exit(0);
+                            break;
+                        default:
+                            Console.WriteLine("Invalid Option");
+                            break;
+
+                    }
+
+                }
+
             }
 
         }
-        public enum LoginOptions
-        {
-            Create=1,
-            Login,
-            Back,
-            Exit
-        }
-        public enum UserOptions
-        {
-            Deposit=1,
-            Withdraw,
-            Transfer,
-            ShowBalance,
-            TransactionHistory,
-            Exit
 
-        }
     }
 }

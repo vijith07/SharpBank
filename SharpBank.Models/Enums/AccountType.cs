@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpBank.Models.Exceptions
+namespace SharpBank.Models.Enums
 {
-    public class IFSCException:Exception
+    public enum AccountType
     {
-        
+        Staff=1,
+        Customer
     }
 }
