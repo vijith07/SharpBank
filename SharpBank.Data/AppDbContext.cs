@@ -10,10 +10,10 @@ namespace SharpBank.Data
         {
 
         }
-        DbSet<Bank> Banks { get; set; }
-        DbSet<Account> Accounts { get; set; }
-        DbSet<Transaction> Transactions { get; set; }
-        DbSet<Currency> Currencies { get; set; }
+        public DbSet<Bank> Banks { get; set; }
+        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Currency> Currencies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

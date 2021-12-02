@@ -11,7 +11,7 @@ namespace SharpBank.Services.Interfaces
     {
         public Bank CreateBank(Bank bank);
         public Bank UpdateBank(Bank bank); 
-        public Bank DeleteBank(Bank bank);
+        public Bank DeleteBank(Guid Id);
         public IEnumerable<Bank> GetAllBanks();
         public Bank GetBank(Guid bankId);
     }
