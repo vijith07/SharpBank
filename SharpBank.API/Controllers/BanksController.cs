@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using SharpBank.API.DTOs.Bank;
+using SharpBank.Models;
 using SharpBank.Services;
 using SharpBank.Services.Interfaces;
 
@@ -11,10 +14,14 @@ namespace SharpBank.API.Controllers
     public class BanksController : ControllerBase
     {
         private readonly IBankService bankService;
+        private readonly ICurrencyService currencyService;
+        private readonly IMapper mapper;
 
-        public BanksController(IBankService bankService)
+        public BanksController(IBankService bankService,ICurrencyService currencyService, IMapper mapper)
         {
             this.bankService = bankService;
+            this.currencyService = currencyService;
+            this.mapper = mapper;
         }
         // GET: api/<BanksController>
         
@@ -23,7 +30,9 @@ namespace SharpBank.API.Controllers
         {
             try
             {
-                return Ok(bankService.GetAllBanks());
+                var all = bankService.GetAllBanks();
+                var allDTO=mapper.Map<IEnumerable<GetBankDTO>>(all);
+                return Ok(allDTO);
             }
             catch (Exception)
             {
@@ -41,8 +50,22 @@ namespace SharpBank.API.Controllers
 
         // POST api/<BanksController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody]CreateBankDTO newBank)
         {
+            if(newBank == null)
+            {
+                return BadRequest(newBank);
+            }
+            var tempBank = mapper.Map<Bank>(newBank);
+            tempBank.Id=Guid.NewGuid();
+            tempBank.DefaultCurrencyId = currencyService.GetCurrencyFromCode("INR").Id;
+            tempBank.CreatedOn = DateTime.Now;
+            tempBank.UpdatedBy = tempBank.CreatedBy;
+            tempBank.UpdatedOn = DateTime.Now;
+
+            var createdBank=bankService.CreateBank(tempBank); 
+
+            return Ok(createdBank);
         }
 
         // PUT api/<BanksController>/5

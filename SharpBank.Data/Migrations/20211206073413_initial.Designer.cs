@@ -12,8 +12,8 @@ using SharpBank.Data;
 namespace SharpBank.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211202060413_Initial")]
-    partial class Initial
+    [Migration("20211206073413_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -60,9 +60,9 @@ namespace SharpBank.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("45a6f085-ff0e-491b-9687-6437832023b4"),
+                            Id = new Guid("4edd901a-7bbe-415d-b2e9-59c20ea949f4"),
                             Balance = 20m,
-                            BankId = new Guid("88cc47df-ab87-4340-9f47-787a05b72ac2"),
+                            BankId = new Guid("64c8f321-a75b-48d7-85c7-8c1237796db2"),
                             Gender = 2,
                             Name = "Babu",
                             Password = "1234",
@@ -71,9 +71,9 @@ namespace SharpBank.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("553928da-fa6c-4415-82e9-f07158c34241"),
+                            Id = new Guid("d5a08d7d-954f-4b70-8eb2-d3b5d0afdcc3"),
                             Balance = 201m,
-                            BankId = new Guid("88cc47df-ab87-4340-9f47-787a05b72ac2"),
+                            BankId = new Guid("64c8f321-a75b-48d7-85c7-8c1237796db2"),
                             Gender = 2,
                             Name = "Baba",
                             Password = "1234",
@@ -127,17 +127,17 @@ namespace SharpBank.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("88cc47df-ab87-4340-9f47-787a05b72ac2"),
+                            Id = new Guid("64c8f321-a75b-48d7-85c7-8c1237796db2"),
                             CreatedBy = "God",
-                            CreatedOn = new DateTime(2021, 12, 2, 11, 34, 12, 302, DateTimeKind.Local).AddTicks(3206),
-                            DefaultCurrencyId = new Guid("a943f9bc-86dc-424d-b636-d3c80ee4273f"),
+                            CreatedOn = new DateTime(2021, 12, 6, 13, 4, 13, 40, DateTimeKind.Local).AddTicks(4293),
+                            DefaultCurrencyId = new Guid("abdbb761-cc0c-432e-8e94-d3823d7a80d6"),
                             IMPSToOther = 0.07m,
                             IMPSToSame = 0.03m,
                             Name = "Kotha Bank",
                             RTGSToOther = 0.05m,
                             RTGSToSame = 0.0m,
                             UpdatedBy = "God",
-                            UpdatedOn = new DateTime(2021, 12, 2, 11, 34, 12, 302, DateTimeKind.Local).AddTicks(3218)
+                            UpdatedOn = new DateTime(2021, 12, 6, 13, 4, 13, 40, DateTimeKind.Local).AddTicks(4302)
                         });
                 });
 
@@ -168,7 +168,7 @@ namespace SharpBank.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("a943f9bc-86dc-424d-b636-d3c80ee4273f"),
+                            Id = new Guid("abdbb761-cc0c-432e-8e94-d3823d7a80d6"),
                             Code = "INR",
                             ExchangeRate = 1m,
                             Name = "Desi Rupee"
@@ -216,13 +216,13 @@ namespace SharpBank.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("fd5a9a18-9f78-4d2c-a357-337e062c2bb5"),
+                            Id = new Guid("5bdc2357-d0bd-45d2-9f49-7186c9c0921a"),
                             Amount = 10m,
-                            DestinationAccountId = new Guid("553928da-fa6c-4415-82e9-f07158c34241"),
+                            DestinationAccountId = new Guid("d5a08d7d-954f-4b70-8eb2-d3b5d0afdcc3"),
                             Mode = 0,
                             NetAmount = 10.1m,
-                            On = new DateTime(2021, 12, 2, 11, 34, 12, 302, DateTimeKind.Local).AddTicks(3255),
-                            SourceAccountId = new Guid("45a6f085-ff0e-491b-9687-6437832023b4"),
+                            On = new DateTime(2021, 12, 6, 13, 4, 13, 40, DateTimeKind.Local).AddTicks(4340),
+                            SourceAccountId = new Guid("4edd901a-7bbe-415d-b2e9-59c20ea949f4"),
                             TransactionCharges = 0.1m,
                             Type = 0
                         });

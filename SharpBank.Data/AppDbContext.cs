@@ -24,7 +24,7 @@ namespace SharpBank.Data
                 .WithOne(a => a.Bank);
 
             modelBuilder.Entity<Bank>().HasMany<Currency>(b => b.Currencies);
-
+            
             modelBuilder.Entity<Bank>().HasOne(b => b.DefaultCurrency);
 
             modelBuilder.Entity<Transaction>()
