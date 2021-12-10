@@ -12,6 +12,7 @@ builder.Services.AddDbContextPool<AppDbContext>(options=>options.UseSqlServer(bu
 builder.Services.AddScoped<IBankService, BankService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddControllers();

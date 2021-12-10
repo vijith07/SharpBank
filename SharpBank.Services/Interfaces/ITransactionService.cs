@@ -13,7 +13,7 @@ namespace SharpBank.Services.Interfaces
         public Transaction UpdateTransaction(Transaction transaction);
         public Transaction DeleteTransaction(Transaction transaction);
         public Transaction GetTransaction(Guid Id);
-        public IEnumerable<Transaction> GetAllTransactions();
+        public IEnumerable<Transaction> GetAllTransactions(Guid bankId,Guid accountId);
         
       
     }

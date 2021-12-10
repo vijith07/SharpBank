@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SharpBank.API.DTOs.Account;
 using SharpBank.API.DTOs.Bank;
+using SharpBank.API.DTOs.Transaction;
 using SharpBank.Models;
 
 namespace SharpBank.API.Profiles
@@ -14,7 +15,14 @@ namespace SharpBank.API.Profiles
             CreateMap<Bank,GetBankDTO>();
             CreateMap<CreateAccountDTO, Account>();
             CreateMap<UpdateAccountDTO, Account>();
+            CreateMap<UpdateAccountBalanceDTO, Account>();
+
             CreateMap<Account, GetAccountDTO>();
+            CreateMap<Account, GetAccountBalanceDTO>();
+
+            CreateMap<Transaction, GetTransactionDTO>();
+
+            CreateMap<DWTransactionDTO, Transaction>();
         }
     }
 }

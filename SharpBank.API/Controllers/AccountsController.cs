@@ -53,7 +53,15 @@ namespace SharpBank.API.Controllers
                 return BadRequest();
             }
         }
-
+        [HttpGet("balance/{bankId}/{id}")]
+        public IActionResult GetBalance(Guid bankId, Guid id)
+        {
+            var acc=accountService.GetAccount(bankId, id);
+            if (accountService.GetAccount(bankId,id)==null)
+                return BadRequest();
+            var accDTO=mapper.Map<GetAccountBalanceDTO>(acc);
+            return Ok(accDTO);
+        }
         // POST api/<AccountsController>
         [HttpPost("{bankId}")]
         public IActionResult Post(Guid bankId,[FromBody] CreateAccountDTO accountDTO)
@@ -81,15 +89,22 @@ namespace SharpBank.API.Controllers
         }
 
         // PUT api/<AccountsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("balance/{bankId}/{id}")]
+        public IActionResult PutBalance(Guid bankId, Guid id, [FromBody]UpdateAccountBalanceDTO updateAccountBalance)
         {
+            if (updateAccountBalance == null)
+                return BadRequest();
+            var acc= accountService.GetAccount(bankId, id);
+            acc.Balance+=updateAccountBalance.Balance;
+            accountService.UpdateAccount(acc);
+            return Ok();
         }
 
         // DELETE api/<AccountsController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+
         }
     }
 }

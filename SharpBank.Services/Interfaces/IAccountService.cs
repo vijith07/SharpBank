@@ -15,6 +15,8 @@ namespace SharpBank.Services.Interfaces
 
         public Account UpdateAccount(Account account);
 
+        
+
         public Account DeleteAccount(Guid bankId,Guid id);
 
         public IEnumerable<Account> GetAllAccounts(Guid bankId);
