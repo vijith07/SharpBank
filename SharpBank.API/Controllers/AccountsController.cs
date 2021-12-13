@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharpBank.API.DTOs.Account;
 using SharpBank.Models;
@@ -8,6 +9,7 @@ using SharpBank.Services.Interfaces;
 
 namespace SharpBank.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountsController : ControllerBase
@@ -105,6 +107,16 @@ namespace SharpBank.API.Controllers
         public void Delete(int id)
         {
 
+        }
+
+        [AllowAnonymous]
+        [HttpPost("auth/{bankId}")]
+        public IActionResult Authenticate(Guid bankId, [FromBody] AuthenticateAccountDTO accountDTO)
+        {
+            var token = accountService.Authenticate(accountDTO.Id, accountDTO.Password);
+            if(token == null)
+                return Unauthorized(); 
+            return Ok(token);
         }
     }
 }

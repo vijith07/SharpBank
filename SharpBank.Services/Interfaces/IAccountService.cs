@@ -21,6 +21,6 @@ namespace SharpBank.Services.Interfaces
 
         public IEnumerable<Account> GetAllAccounts(Guid bankId);
 
-        public bool Authenticate(Account account,string password);
+        public string Authenticate(Guid accountId,string password);
     }
 }

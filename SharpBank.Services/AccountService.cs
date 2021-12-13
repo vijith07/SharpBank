@@ -1,9 +1,12 @@
-﻿using SharpBank.Data;
+﻿using Microsoft.IdentityModel.Tokens;
+using SharpBank.Data;
 using SharpBank.Models;
 using SharpBank.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,9 +20,25 @@ namespace SharpBank.Services
         {
             this.appDbContext = appDbContext;
         }
-        public bool Authenticate(Account account, string password)
+        public string Authenticate(Guid accountId ,string password)
         {
-            return BCrypt.Net.BCrypt.Verify(account.Password, password);
+            Account account = appDbContext.Accounts.SingleOrDefault(a => a.Id == accountId);
+            if (account == null)
+                return null;
+            bool res=BCrypt.Net.BCrypt.Verify(password,account.Password);
+            if(!res)
+                return null;
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenKey=Encoding.ASCII.GetBytes("Kurzgesagt – In a Nutshell");
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name,account.Name) }),
+                Expires = DateTime.Now.AddHours(1),
+                SigningCredentials = 
+                new SigningCredentials(new SymmetricSecurityKey(tokenKey),SecurityAlgorithms.HmacSha256)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
 
         
