@@ -1,13 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31702.278
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBank.CLI", "SharpBank.CLI\SharpBank.CLI.csproj", "{7C6AF0E7-6483-4F01-A27C-2CC2294141A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBank.Models", "SharpBank.Models\SharpBank.Models.csproj", "{DAA0F9EB-65A8-4A9C-B90E-1EAEFD374CA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBank.Models", "SharpBank.Models\SharpBank.Models.csproj", "{DAA0F9EB-65A8-4A9C-B90E-1EAEFD374CA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBank.Services", "SharpBank.Services\SharpBank.Services.csproj", "{F649CC9C-88D8-4274-9884-9FC4379C26A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBank.Data", "SharpBank.Data\SharpBank.Data.csproj", "{C9A62F7F-F22B-43BF-9E97-D8E80DA7D88E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBank.Services", "SharpBank.Services\SharpBank.Services.csproj", "{708B8C0D-4E88-41CA-9D11-B33F6213F994}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBank.API", "SharpBank.API\SharpBank.API.csproj", "{A77EC102-2C62-4232-A48C-D97BA18025B6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D809F82A-49AF-482F-8C4E-753AA349B320}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +29,18 @@ Global
 		{DAA0F9EB-65A8-4A9C-B90E-1EAEFD374CA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAA0F9EB-65A8-4A9C-B90E-1EAEFD374CA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAA0F9EB-65A8-4A9C-B90E-1EAEFD374CA6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F649CC9C-88D8-4274-9884-9FC4379C26A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F649CC9C-88D8-4274-9884-9FC4379C26A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F649CC9C-88D8-4274-9884-9FC4379C26A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F649CC9C-88D8-4274-9884-9FC4379C26A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9A62F7F-F22B-43BF-9E97-D8E80DA7D88E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9A62F7F-F22B-43BF-9E97-D8E80DA7D88E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9A62F7F-F22B-43BF-9E97-D8E80DA7D88E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9A62F7F-F22B-43BF-9E97-D8E80DA7D88E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{708B8C0D-4E88-41CA-9D11-B33F6213F994}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{708B8C0D-4E88-41CA-9D11-B33F6213F994}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{708B8C0D-4E88-41CA-9D11-B33F6213F994}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{708B8C0D-4E88-41CA-9D11-B33F6213F994}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A77EC102-2C62-4232-A48C-D97BA18025B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A77EC102-2C62-4232-A48C-D97BA18025B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A77EC102-2C62-4232-A48C-D97BA18025B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A77EC102-2C62-4232-A48C-D97BA18025B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

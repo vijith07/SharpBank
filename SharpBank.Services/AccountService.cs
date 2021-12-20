@@ -1,99 +1,92 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.IdentityModel.Tokens;
+using SharpBank.Data;
 using SharpBank.Models;
 using SharpBank.Models.Enums;
-using SharpBank.Models.Exceptions;
+using SharpBank.Services.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SharpBank.Services
 {
-    public class AccountService
+    public class AccountService : IAccountService
     {
-        private readonly BankService bankService;
+        private readonly AppDbContext appDbContext;
 
-        public AccountService(BankService bankService)
+        public AccountService(AppDbContext appDbContext)
         {
-            this.bankService = bankService;
-   
+            this.appDbContext = appDbContext;
         }
-        public Account GetAccount(string bankId, string accountId)
+        public string Authenticate(Guid accountId ,string password)
         {
-            Account acc= bankService.GetBank(bankId).Accounts.SingleOrDefault(a => a.Id == accountId);
-            if(acc==null)
+            Account account = appDbContext.Accounts.SingleOrDefault(a => a.Id == accountId);
+            if (account == null)
+                return null;
+            bool res=BCrypt.Net.BCrypt.Verify(password,account.Password);
+            if(!res)
+                return null;
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenKey=Encoding.ASCII.GetBytes("Kurzgesagt – In a Nutshell");
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                throw new AccountNumberException();
-            }
+                Subject = new ClaimsIdentity(
+                    new Claim[] {
+                        new Claim(ClaimTypes.Name,account.Name) ,
+                        new Claim(ClaimTypes.Role,account.Type.ToString())
+                    }),
+                Expires = DateTime.Now.AddHours(1),
+                SigningCredentials = 
+                new SigningCredentials(new SymmetricSecurityKey(tokenKey),SecurityAlgorithms.HmacSha256)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+        
+
+        public Account CreateAccount( Account account)
+        {
+            appDbContext.Accounts.Add(account);
+            appDbContext.SaveChanges();
+            var createdAccount=appDbContext.Accounts.FirstOrDefault(a=>a.Id==account.Id);
+            return createdAccount;
+        }
+
+      
+
+        public Account DeleteAccount(Guid bankId, Guid id)
+        {
+            var acc = GetAccount(bankId, id);
+            appDbContext.Accounts.Remove(acc);
+            appDbContext.SaveChanges();
             return acc;
         }
-        public decimal GetBalance(string bankId, string accountId)
-        {
-            Account acc = GetAccount(bankId, accountId);
-            return acc.Balance;
-        }
-        public string AddAccount(String name, string bankId, Gender gender, AccountType Type)
-        {
-            Account account = new Account
-            {
-                Id = GenerateId(bankId,name),
-                Name = name,
-                Password = (name.Substring(0,1)+"@123").GetHashCode().ToString(),
-                Balance = 0m,
-                Gender = Models.Enums.Gender.Other,
-                Status = Models.Enums.Status.Active,
-                Type=Type,
-                Transactions = new List<Transaction>()
-            };
-            bankService.GetBank(bankId).Accounts.Add(account);
-            return account.Id;
-        }
-        public string GenerateId(string bankId, String name)
-        {
-            Bank bank = bankService.GetBank(bankId);
-            string Id;
-            do
-            {
-                string timestamp = DateTime.UtcNow.ToString("yyMMddhmsf",
-                                        System.Globalization.CultureInfo.InvariantCulture);
-                Id = name.Substring(0, 3).ToUpper() + timestamp;
 
-            }
-            while (bank.Accounts.SingleOrDefault(b => b.Id == Id) != null);
-            return Id;
+        public Account GetAccount(Guid bankId,Guid acccountId)
+        {
+            return appDbContext.Accounts.FirstOrDefault(a => (a.Id == acccountId) && (a.BankId==bankId));
+            
         }
 
-        public void UpdateBalance(string bankId, string accountId, decimal Balance)
-        {
-            Account acc = GetAccount(bankId, accountId);
-            acc.Balance = Balance;
+        
 
-        }
-        public void RemoveAccount(string bankId, string accountId)
+        public IEnumerable<Account> GetAllAccounts(Guid bankId)
         {
-            bankService.GetBank(bankId).Accounts.Remove(GetAccount(bankId, accountId));
+            return appDbContext.Accounts.Where(a=>a.BankId==bankId).ToList();
         }
-        public bool ValidateUser(string bankId, string accountId,string password)
+
+   
+
+        public Account UpdateAccount( Account account)
         {
-            Account acc = GetAccount(bankId, accountId);
-            if (acc.Password != password.GetHashCode().ToString()) {
-                throw new PasswordIncorrectException();
-            }
-            return true;
-        }
-        public bool ValidateStaff(string bankId, string accountId, string password)
-        {
-            Account acc = GetAccount(bankId, accountId);
-            if (acc.Type != AccountType.Staff)
-            {
-                throw new Models.Exceptions.UnauthorizedAccessException();
-            }
-            if (acc.Password != password.GetHashCode().ToString())
-            {
-                throw new PasswordIncorrectException();
-            }
-            return true;
+            appDbContext.Accounts.Attach(account);
+            appDbContext.SaveChanges();
+            var updatedAccount = appDbContext.Accounts.FirstOrDefault(a => a.Id == account.Id);
+            return updatedAccount;
         }
     }
 }
