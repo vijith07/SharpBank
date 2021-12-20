@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SharpBank.API.Controllers.AccountsController">
+    <Position X="3.25" Y="10.5" Width="1.5" />
+    <AssociationLine Name="accountService" Type="SharpBank.Services.Interfaces.IAccountService">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.273" Y="0.335" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAIAABAAAAAAAIACAEAAAYAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\AccountsController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="accountService" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SharpBank.API.Controllers.BanksController">
+    <Position X="8.5" Y="10.5" Width="1.5" />
+    <AssociationLine Name="bankService" Type="SharpBank.Services.Interfaces.IBankService">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.173" Y="0.418" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAABAAAAAAAAACAEAAAAAAAAAAAAAAgg=</HashCode>
+      <FileName>Controllers\BanksController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="bankService" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SharpBank.API.Controllers.TransactionsController">
+    <Position X="5.75" Y="10.5" Width="1.5" />
+    <AssociationLine Name="transactionService" Type="SharpBank.Services.Interfaces.ITransactionService" ManuallyRouted="true">
+      <Path>
+        <Point X="7.25" Y="12.533" />
+        <Point X="5" Y="12.533" />
+        <Point X="5" Y="7.671" />
+        <Point X="7" Y="7.671" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.348" Y="0.51" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAIAABAAAAAAAAECAAAAAAAAAAAAAAAQgI=</HashCode>
+      <FileName>Controllers\TransactionsController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="transactionService" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SharpBank.Models.Account">
+    <Position X="5.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="SharpBank.Models.Bank">
+    <Position X="7.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="SharpBank.Models.Currency">
+    <Position X="3.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="SharpBank.Models.Transaction">
+    <Position X="9.75" Y="0.5" Width="1.75" />
+    <Members>
+      <Property Name="DestinationAccount" Hidden="true" />
+      <Property Name="SourceAccount" Hidden="true" />
+    </Members>
+    <TypeIdentifier />
+    <ShowAsAssociation>
+      <Property Name="SourceAccount" />
+      <Property Name="DestinationAccount" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SharpBank.Services.AccountService" BaseTypeListCollapsed="true">
+    <Position X="3.25" Y="8" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SharpBank.Services.BankService" BaseTypeListCollapsed="true">
+    <Position X="8.5" Y="8" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.1" />
+  </Class>
+  <Class Name="SharpBank.Services.CurrencyService" BaseTypeListCollapsed="true">
+    <Position X="10.75" Y="8" Width="2" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SharpBank.Services.TransactionService" BaseTypeListCollapsed="true">
+    <Position X="5.5" Y="8" Width="1.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.325" />
+  </Class>
+  <Class Name="SharpBank.Data.AppDbContext">
+    <Position X="5.5" Y="4.25" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="SharpBank.Services.Interfaces.IAccountService" Collapsed="true">
+    <Position X="3.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="SharpBank.Services.Interfaces.IBankService" Collapsed="true">
+    <Position X="8.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="SharpBank.Services.Interfaces.ITransactionService" Collapsed="true">
+    <Position X="5.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="SharpBank.Services.Interfaces.ICurrencyService" Collapsed="true">
+    <Position X="11" Y="7.25" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

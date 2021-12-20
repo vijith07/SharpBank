@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharpBank.API.DTOs.Bank;
 using SharpBank.Models;
@@ -9,6 +10,7 @@ using SharpBank.Services.Interfaces;
 
 namespace SharpBank.API.Controllers
 {
+    [Authorize(Roles="Staff")]
     [Route("api/[controller]")]
     [ApiController]
     public class BanksController : ControllerBase
@@ -24,7 +26,7 @@ namespace SharpBank.API.Controllers
             this.mapper = mapper;
         }
         // GET: api/<BanksController>
-        
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Get()
         {
@@ -40,6 +42,7 @@ namespace SharpBank.API.Controllers
                 return BadRequest();
             }
         }
+        [AllowAnonymous]
 
         // GET api/<BanksController>/5
         [HttpGet("{id}")]
@@ -47,8 +50,8 @@ namespace SharpBank.API.Controllers
         {
             return "value";
         }
-
         // POST api/<BanksController>
+        [Authorize(Roles="Staff")]
         [HttpPost]
         public IActionResult Post([FromBody]CreateBankDTO newBank)
         {

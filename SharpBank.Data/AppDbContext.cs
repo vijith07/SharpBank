@@ -51,10 +51,10 @@ namespace SharpBank.Data
             Bank b1 = new Bank
             {
                 Id = Guid.NewGuid(),
-                Name = "Kotha Bank",
+                Name = "New Bank",
                 DefaultCurrencyId = currency.Id,
-                CreatedBy = "God",
-                UpdatedBy = "God",
+                CreatedBy = "admin",
+                UpdatedBy = "admin",
                 CreatedOn = DateTime.Now,
                 UpdatedOn = DateTime.Now,
                 RTGSToOther = 0.05m,
@@ -67,7 +67,7 @@ namespace SharpBank.Data
             Account account1 = new Account
             {
                 Id = Guid.NewGuid(),
-                Name = "Babu",
+                Name = "John Hoe",
                 BankId = b1.Id,
                 Balance = 20m,
                 Password = "1234",
@@ -79,7 +79,7 @@ namespace SharpBank.Data
             Account account2 = new Account
             {
                 Id = Guid.NewGuid(),
-                Name = "Baba",
+                Name = "Jane Doe",
                 BankId = b1.Id,
                 Balance = 201m,
                 Password = "1234",

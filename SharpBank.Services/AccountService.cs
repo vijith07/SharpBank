@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using SharpBank.Data;
 using SharpBank.Models;
+using SharpBank.Models.Enums;
 using SharpBank.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -32,7 +33,11 @@ namespace SharpBank.Services
             var tokenKey=Encoding.ASCII.GetBytes("Kurzgesagt – In a Nutshell");
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name,account.Name) }),
+                Subject = new ClaimsIdentity(
+                    new Claim[] {
+                        new Claim(ClaimTypes.Name,account.Name) ,
+                        new Claim(ClaimTypes.Role,account.Type.ToString())
+                    }),
                 Expires = DateTime.Now.AddHours(1),
                 SigningCredentials = 
                 new SigningCredentials(new SymmetricSecurityKey(tokenKey),SecurityAlgorithms.HmacSha256)

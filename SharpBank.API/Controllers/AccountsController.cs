@@ -9,6 +9,7 @@ using SharpBank.Services.Interfaces;
 
 namespace SharpBank.API.Controllers
 {
+    
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
@@ -23,6 +24,8 @@ namespace SharpBank.API.Controllers
             this.mapper = mapper;
         }
         // GET: api/<AccountsController>
+        [Authorize(Roles ="Staff")]
+
         [HttpGet("{bankId}")]
         public IActionResult Get(Guid bankId)
         {
@@ -65,6 +68,8 @@ namespace SharpBank.API.Controllers
             return Ok(accDTO);
         }
         // POST api/<AccountsController>
+        [Authorize(Roles = "Staff")]
+
         [HttpPost("{bankId}")]
         public IActionResult Post(Guid bankId,[FromBody] CreateAccountDTO accountDTO)
         {
@@ -74,7 +79,7 @@ namespace SharpBank.API.Controllers
                     return BadRequest();
                 var acc = mapper.Map<Account>(accountDTO);
                 acc.Password=BCrypt.Net.BCrypt.HashPassword(accountDTO.Password);
-                acc.Type = Models.Enums.AccountType.Customer;
+                //acc.Type = Models.Enums.AccountType.Customer;
                 acc.Status = Models.Enums.Status.Active;
                 acc.Id=Guid.NewGuid();
                 acc.BankId=bankId;
@@ -89,8 +94,8 @@ namespace SharpBank.API.Controllers
            
 
         }
-
         // PUT api/<AccountsController>/5
+
         [HttpPut("balance/{bankId}/{id}")]
         public IActionResult PutBalance(Guid bankId, Guid id, [FromBody]UpdateAccountBalanceDTO updateAccountBalance)
         {

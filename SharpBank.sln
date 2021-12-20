@@ -7,11 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBank.CLI", "SharpBank.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBank.Models", "SharpBank.Models\SharpBank.Models.csproj", "{DAA0F9EB-65A8-4A9C-B90E-1EAEFD374CA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBank.Data", "SharpBank.Data\SharpBank.Data.csproj", "{C9A62F7F-F22B-43BF-9E97-D8E80DA7D88E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBank.Data", "SharpBank.Data\SharpBank.Data.csproj", "{C9A62F7F-F22B-43BF-9E97-D8E80DA7D88E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBank.Services", "SharpBank.Services\SharpBank.Services.csproj", "{708B8C0D-4E88-41CA-9D11-B33F6213F994}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBank.Services", "SharpBank.Services\SharpBank.Services.csproj", "{708B8C0D-4E88-41CA-9D11-B33F6213F994}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBank.API", "SharpBank.API\SharpBank.API.csproj", "{A77EC102-2C62-4232-A48C-D97BA18025B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBank.API", "SharpBank.API\SharpBank.API.csproj", "{A77EC102-2C62-4232-A48C-D97BA18025B6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D809F82A-49AF-482F-8C4E-753AA349B320}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharpBank.API.DTOs.Transaction;
 using SharpBank.Data;
@@ -9,6 +10,7 @@ using SharpBank.Services.Interfaces;
 
 namespace SharpBank.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TransactionsController : ControllerBase
