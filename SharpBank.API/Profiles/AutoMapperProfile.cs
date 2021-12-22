@@ -20,6 +20,7 @@ namespace SharpBank.API.Profiles
             CreateMap<Account, GetAccountDTO>();
             CreateMap<Account, GetAccountBalanceDTO>();
             CreateMap<Transaction, GetTransactionDTO>();
+            CreateMap<CreateTransactionDTO, Transaction>();
             CreateMap<DWTransactionDTO, Transaction>();
         }
     }
