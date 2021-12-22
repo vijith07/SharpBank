@@ -5,6 +5,7 @@ using SharpBank.API.DTOs.Transaction;
 using SharpBank.Data;
 using SharpBank.Models;
 using SharpBank.Services.Interfaces;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -65,6 +66,13 @@ namespace SharpBank.API.Controllers
         {
             try
             {
+                var claimsIdentity = User.Identity as ClaimsIdentity;
+
+                var IdClaim = claimsIdentity.FindFirst(ClaimTypes.Name);
+                if (IdClaim.Value.ToString() != accountId.ToString())
+                {
+                    return Forbid();
+                }
                 if (newTransaction == null || newTransaction.Amount <= 0)
                     return BadRequest();
                 decimal transactionCharges = 0;
@@ -112,7 +120,8 @@ namespace SharpBank.API.Controllers
                 t.Mode=newTransaction.Mode;
                 t.On=DateTime.Now;
                 transactionService.CreateTransaction(t);
-                return Ok(t.Id);
+                var getTDto=mapper.Map<GetTransactionDTO>(t);
+                return Ok(getTDto);
             }
             catch (Exception)
             {
@@ -126,6 +135,13 @@ namespace SharpBank.API.Controllers
         {
             try
             {
+                var claimsIdentity = User.Identity as ClaimsIdentity;
+
+                var IdClaim = claimsIdentity.FindFirst(ClaimTypes.Name);
+                if (IdClaim.Value.ToString() != accountId.ToString())
+                {
+                    return Forbid();
+                }
                 if (newTransaction == null || newTransaction.Amount <= 0)
                     return BadRequest();
                 var sourceAcc = accountService.GetAccount(bankId, accountId);

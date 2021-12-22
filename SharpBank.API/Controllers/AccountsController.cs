@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SharpBank.API.DTOs.Account;
 using SharpBank.Models;
 using SharpBank.Services.Interfaces;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -61,6 +62,13 @@ namespace SharpBank.API.Controllers
         [HttpGet("balance/{bankId}/{id}")]
         public IActionResult GetBalance(Guid bankId, Guid id)
         {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+
+            var IdClaim = claimsIdentity.FindFirst(ClaimTypes.Name);
+            if (IdClaim.Value.ToString() != id.ToString())
+            {
+                return Forbid();
+            }
             var acc=accountService.GetAccount(bankId, id);
             if (accountService.GetAccount(bankId,id)==null)
                 return BadRequest();

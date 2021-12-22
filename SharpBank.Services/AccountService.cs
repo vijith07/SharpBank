@@ -35,7 +35,7 @@ namespace SharpBank.Services
             {
                 Subject = new ClaimsIdentity(
                     new Claim[] {
-                        new Claim(ClaimTypes.Name,account.Name) ,
+                        new Claim(ClaimTypes.Name,account.Id.ToString()) ,
                         new Claim(ClaimTypes.Role,account.Type.ToString())
                     }),
                 Expires = DateTime.Now.AddHours(1),
